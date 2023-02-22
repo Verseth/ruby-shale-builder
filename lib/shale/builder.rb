@@ -38,11 +38,21 @@ module Shale
   #
   module Builder
     class << self
-      # Gets called after including this module.
+      # Gets called after including this module in a module or class.
       #
-      # @param mod [Module]
+      # @param mod [Module, Class]
+      # @return [void]
       def included(mod)
         mod.extend ClassMethods
+        Builder.prepare_mod(mod)
+      end
+
+      # Prepares the received module or class
+      # for dynamic method definition.
+      #
+      # @param mod [Module, Class]
+      # @return [void]
+      def prepare_mod(mod)
         builder_methods_module = ::Module.new
         mod.instance_variable_set :@builder_methods_module, builder_methods_module
         mod.include builder_methods_module
@@ -51,6 +61,13 @@ module Shale
 
     # Class methods provided by `Shale::Builder`
     module ClassMethods
+      # @param subclass [Class]
+      # @return [void]
+      def inherited(subclass)
+        super
+        Builder.prepare_mod(subclass)
+      end
+
       # Contains overridden getter methods for attributes
       # with complex types (so that they accept a block for building)
       #

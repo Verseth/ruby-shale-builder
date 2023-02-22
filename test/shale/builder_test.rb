@@ -29,8 +29,61 @@ class Shale::BuilderTest < ::Minitest::Test
     attribute :amount, TestAmountType
   end
 
+  class TestClientDataType < ::Shale::Mapper
+    include ::Shale::Builder
 
-  should 'correctly set up a class after inheriting' do
+    attribute :first_name, ::Shale::Type::String
+    attribute :last_name, ::Shale::Type::String
+    attribute :email, ::Shale::Type::String
+  end
+
+  class TestEnhancedTransactionType < TestTransactionType
+    attribute :client_data, TestClientDataType
+  end
+
+  context 'inheritance' do
+    should 'correctly set up a class after inheriting' do
+      mod_parent = TestTransactionType.builder_methods_module
+      mod_child = TestEnhancedTransactionType.builder_methods_module
+      assert mod_parent.is_a?(::Module)
+      assert mod_child.is_a?(::Module)
+      assert !mod_child.equal?(mod_parent)
+      assert TestTransactionType.include?(mod_parent)
+      assert !TestTransactionType.include?(mod_child)
+      assert TestEnhancedTransactionType.include?(mod_child)
+      assert TestEnhancedTransactionType.include?(mod_parent)
+      assert_equal %i[amount], mod_parent.instance_methods
+      assert_equal %i[client_data], mod_child.instance_methods
+    end
+
+    should 'correctly build an instance of a subclass' do
+      obj = TestEnhancedTransactionType.build do |t|
+        t.cvv_code = '321'
+        t.amount do |a|
+          a.value = 45.0
+          a.currency = 'USD'
+        end
+        t.client_data do |c|
+          c.first_name = 'Dupa'
+          c.last_name = 'Kret'
+          c.email = 'something@example.com'
+        end
+      end
+
+      assert obj.is_a?(TestEnhancedTransactionType)
+      assert_equal '321', obj.cvv_code
+      assert obj.amount.is_a?(TestAmountType)
+      assert_equal 45.0, obj.amount.value
+      assert_equal 'USD', obj.amount.currency
+      assert obj.client_data.is_a?(TestClientDataType)
+      assert_equal 'Dupa', obj.client_data.first_name
+      assert_equal 'Kret', obj.client_data.last_name
+      assert_equal 'something@example.com', obj.client_data.email
+    end
+  end
+
+
+  should 'correctly set up a class after including' do
     mod = TestTransactionType.builder_methods_module
     assert mod.is_a?(::Module)
     assert TestTransactionType.include?(mod)
