@@ -90,7 +90,7 @@ class PaymentInstrument < Shale::Mapper
     attribute :expiration_month, ::Shale::Type::Integer
 end
 
-class Transaction < ::Shale::Mapper
+class Transaction < Shale::Mapper
     include Shale::Builder
 
     attribute :cvv_code, Shale::Type::String
@@ -141,6 +141,52 @@ That's possible because the getters of attributes with
 non-primitive types have been overridden to accept blocks.
 When a block is given to such a getter, it instantiates an empty object
 of its type and yields it to the block.
+
+### Collections
+
+Whenever you call a getter with a block for a collection attribute, the built object will be appended to the array.
+
+Let's define a schema like this.
+
+```rb
+class Client < Shale::Mapper
+    include Shale::Builder
+
+    attribute :first_name, Shale::Type::String
+    attribute :last_name, Shale::Type::String
+    attribute :email, Shale::Type::String
+end
+
+class Transaction < Shale::Mapper
+    include Shale::Builder
+
+    attribute :clients, Client, collection: true
+end
+```
+
+You can easily build add new clients to the collection like so:
+
+```rb
+transaction = Transaction.build do |t|
+  # this will be added as the first element of the collection
+  t.clients do |c|
+    c.first_name = 'Foo'
+    c.last_name = 'Bar'
+  end
+
+  # this will be added as the second element of the collection
+  t.clients do |c|
+    c.first_name = 'Grant'
+    c.last_name = 'Taylor'
+  end
+end
+
+p transaction.clients
+# [
+#    #<Client:0x00000001066c2828 @first_name="Foo", @last_name="Bar", @email=nil>,
+#    #<Client:0x00000001066c24b8 @first_name="Grant", @last_name="Taylor", @email=nil>
+# ]
+```
 
 ### Conditional building
 

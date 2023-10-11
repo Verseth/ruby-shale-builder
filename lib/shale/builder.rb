@@ -89,9 +89,24 @@ module Shale
       # @param name [String, Symbol]
       # @param type [Class]
       # @return [void]
-      def attribute(name, type, *args, **kwargs, &block)
+      def attribute(name, type, *args, collection: false, **kwargs, &block)
         super
         return unless type < ::Shale::Mapper
+
+        if collection
+          @builder_methods_module.class_eval <<~RUBY, __FILE__, __LINE__ + 1
+            def #{name}                           # def clients
+              return super unless block_given?    #   return super unless block_given?
+                                                  #
+              arr = self.#{name} ||= []           #   arr = self.clients ||= []
+              object = #{type}.new                #   object = Client.new
+              yield(object)                       #   yield(object)
+              arr << object                       #   arr << object
+              object                              #   object
+            end                                   # end
+          RUBY
+          return
+        end
 
         @builder_methods_module.class_eval <<~RUBY, __FILE__, __LINE__ + 1
           def #{name}                                   # def amount

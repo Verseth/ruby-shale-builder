@@ -5,3 +5,4 @@ require 'shale/builder'
 
 require 'minitest/autorun'
 require 'shoulda-context'
+require 'byebug'

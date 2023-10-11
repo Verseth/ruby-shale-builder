@@ -41,6 +41,10 @@ class Shale::BuilderTest < ::Minitest::Test
     attribute :client_data, TestClientDataType
   end
 
+  class TestMultipleClientTransactionType < TestTransactionType
+    attribute :clients, TestClientDataType, collection: true
+  end
+
   context 'inheritance' do
     should 'correctly set up a class after inheriting' do
       mod_parent = TestTransactionType.builder_methods_module
@@ -150,6 +154,44 @@ class Shale::BuilderTest < ::Minitest::Test
     assert obj.amount.is_a?(TestAmountType)
     assert_equal 45.0, obj.amount.value
     assert_equal 'USD', obj.amount.currency
+  end
+
+  should 'build an object with a collection attribute' do
+    obj = TestMultipleClientTransactionType.build do |t|
+      t.cvv_code = '321'
+      t.amount do |a|
+        a.value = 45.0
+        a.currency = 'USD'
+      end
+      t.clients do |c|
+        c.first_name = 'Mateusz'
+        c.last_name = 'Gobbins'
+        c.email = 'mat.gobbins@example.com'
+      end
+      t.clients do |c|
+        c.first_name = 'Michal'
+        c.last_name = 'Zapow'
+        c.email = 'mich.zapow@example.com'
+      end
+    end
+
+    assert obj.is_a?(TestTransactionType)
+    assert_equal '321', obj.cvv_code
+    assert obj.amount.is_a?(TestAmountType)
+    assert_equal 45.0, obj.amount.value
+    assert_equal 'USD', obj.amount.currency
+    assert obj.clients.is_a?(::Array), "Should be and Array, got: #{obj.clients.class.inspect}"
+    assert_equal 2, obj.clients.length
+
+    cli = obj.clients.first
+    assert_equal 'Mateusz', cli.first_name
+    assert_equal 'Gobbins', cli.last_name
+    assert_equal 'mat.gobbins@example.com', cli.email
+
+    cli = obj.clients.last
+    assert_equal 'Michal', cli.first_name
+    assert_equal 'Zapow', cli.last_name
+    assert_equal 'mich.zapow@example.com', cli.email
   end
 
   should 'build an object through the alt DSL' do
