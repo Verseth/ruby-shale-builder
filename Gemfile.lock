@@ -1,8 +1,8 @@
 PATH
   remote: .
   specs:
-    shale-builder (0.1.2)
-      shale (< 1.0)
+    shale-builder (0.1.3)
+      shale (< 2.0)
 
 GEM
   remote: https://rubygems.org/
@@ -75,6 +75,7 @@ GEM
 
 PLATFORMS
   arm64-darwin-20
+  arm64-darwin-22
   x86_64-linux
 
 DEPENDENCIES
