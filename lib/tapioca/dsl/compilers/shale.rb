@@ -1,6 +1,12 @@
 # typed: true
 # frozen_string_literal: true
 
+require 'shale'
+begin
+  require 'shale/builder'
+rescue LoadError
+end
+
 module Tapioca
   module Compilers
     class Shale < Tapioca::Dsl::Compiler
