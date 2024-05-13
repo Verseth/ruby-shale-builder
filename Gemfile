@@ -11,4 +11,5 @@ gem 'rake', '~> 13.0' # automation tasks
 gem 'rubocop-espago', '~> 1.0' # ruby linter
 gem 'shoulda-context', '~> 2.0' # more pleasant test syntax
 gem 'solargraph', '~> 0.48'  # language server
+gem 'sorbet', '>= 0.5' # static typechecker
 gem 'tapioca', '> 0.13' # RBI generator for sorbet

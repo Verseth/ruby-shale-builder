@@ -120,6 +120,7 @@ DEPENDENCIES
   shale-builder!
   shoulda-context (~> 2.0)
   solargraph (~> 0.48)
+  sorbet (>= 0.5)
   tapioca (> 0.13)
 
 BUNDLED WITH
