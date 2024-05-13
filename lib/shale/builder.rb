@@ -106,7 +106,7 @@ module Shale
         ).void
       end
       def attribute(name, type, collection: false, default: nil, doc: nil, **kwargs, &block)
-        super(name, type, collection: collection, default: default, **kwargs, &block)
+        super(name, type, collection:, default:, **kwargs, &block)
         attributes[name.to_sym]&.doc = doc # add doc to the attribute
         return unless type < ::Shale::Mapper
 

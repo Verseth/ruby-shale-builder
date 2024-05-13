@@ -11,3 +11,6 @@ Style/DocumentationMethod:
 
 Style/TrailingCommaInArguments:
   Enabled: false
+
+Naming/BlockForwarding:
+  Enabled: false
