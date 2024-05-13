@@ -24,12 +24,15 @@ module Tapioca
         end
       end
 
+      SHALE_ATTRIBUTE_MODULE = 'ShaleAttributeMethods'
+
       sig { override.void }
       def decorate
         # Create a RBI definition for each class that inherits from Shale::Mapper
         root.create_path(constant) do |klass|
           has_shale_builder = includes_shale_builder(constant)
-
+          mod = klass.create_module(SHALE_ATTRIBUTE_MODULE)
+          klass.create_include(SHALE_ATTRIBUTE_MODULE)
           # For each attribute defined in the class
           constant.attributes.each_value do |attribute|
             attribute = T.let(attribute, ::Shale::Attribute)
@@ -55,18 +58,18 @@ module Tapioca
                 parameters: { block: "T.proc.params(arg0: #{non_nilable_type}).void" },
                 return_type: non_nilable_type
               )
-              klass.create_method_with_sigs(
+              mod.create_method_with_sigs(
                 attribute.name,
                 sigs: sigs,
                 comments: comments,
                 parameters: [RBI::BlockParam.new('block')],
               )
             else
-              klass.create_method(attribute.name, return_type: type, comments: comments)
+              mod.create_method(attribute.name, return_type: type, comments: comments)
             end
 
             # setter
-            klass.create_method(
+            mod.create_method(
               "#{attribute.name}=",
               parameters: [create_param('value', type: type)],
               return_type: type,
