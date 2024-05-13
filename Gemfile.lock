@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    shale-builder (0.1.3)
+    shale-builder (0.1.4)
       shale (< 2.0)
 
 GEM

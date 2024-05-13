@@ -1,3 +1,7 @@
+## [0.1.4] - 2024-05-13
+
+- Add a tapioca compiler for shale and shale builder
+
 ## [0.1.3] - 2023-11-23
 
 - Change shale version dependency from `< 1.0` to `< 2.0`
