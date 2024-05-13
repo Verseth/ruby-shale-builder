@@ -1,3 +1,8 @@
+## [0.1.7] - 2024-05-13
+
+- Drop support for Ruby 3.0
+- Add support for Ruby 3.3
+
 ## [0.1.6] - 2024-05-13
 
 - Add support for doc strings in the tapioca compiler
