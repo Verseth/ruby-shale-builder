@@ -5,3 +5,9 @@ AllCops:
   TargetRubyVersion: 3.0
   Exclude:
     - lib/tapioca/**/*.rb
+
+Style/DocumentationMethod:
+  Enabled: false
+
+Style/TrailingCommaInArguments:
+  Enabled: false

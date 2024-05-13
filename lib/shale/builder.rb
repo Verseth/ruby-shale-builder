@@ -1,8 +1,11 @@
 # frozen_string_literal: true
+# typed: true
 
 require 'shale'
+require 'sorbet-runtime'
 
 require_relative 'builder/version'
+require_relative 'attribute'
 
 module Shale
   # It's meant to be included in subclasses of `Shale::Mapper`
@@ -37,11 +40,13 @@ module Shale
   #       end
   #
   module Builder
+    extend T::Helpers
+
     class << self
+      extend T::Sig
+
       # Gets called after including this module in a module or class.
-      #
-      # @param mod [Module, Class]
-      # @return [void]
+      sig { params(mod: Module).void }
       def included(mod)
         mod.extend ClassMethods
         Builder.prepare_mod(mod)
@@ -49,9 +54,7 @@ module Shale
 
       # Prepares the received module or class
       # for dynamic method definition.
-      #
-      # @param mod [Module, Class]
-      # @return [void]
+      sig { params(mod: Module).void }
       def prepare_mod(mod)
         builder_methods_module = ::Module.new
         mod.instance_variable_set :@builder_methods_module, builder_methods_module
@@ -61,8 +64,12 @@ module Shale
 
     # Class methods provided by `Shale::Builder`
     module ClassMethods
-      # @param subclass [Class]
-      # @return [void]
+      extend T::Sig
+      extend T::Generic
+      abstract!
+      has_attached_class!
+
+      sig { params(subclass: Class).void }
       def inherited(subclass)
         super
         Builder.prepare_mod(subclass)
@@ -70,27 +77,37 @@ module Shale
 
       # Contains overridden getter methods for attributes
       # with complex types (so that they accept a block for building)
-      #
-      # @return [Module]
+      sig { returns(Module) }
       attr_reader :builder_methods_module
 
-      # @return [Class, nil]
-      attr_accessor :request_class
-
-      # @yieldparam [self]
-      # @return [self]
-      def build
+      sig { params(_block: T.proc.params(arg0: T.attached_class).void).returns(T.attached_class) }
+      def build(&_block)
         body = new
         yield(body)
 
         body
       end
 
-      # @param name [String, Symbol]
-      # @param type [Class]
-      # @return [void]
-      def attribute(name, type, *args, collection: false, **kwargs, &block)
-        super
+      sig { abstract.returns(T.attached_class) }
+      def new; end
+
+      sig { abstract.returns(T::Hash[Symbol, Shale::Attribute]) }
+      def attributes; end
+
+      sig do
+        params(
+          name: T.any(String, Symbol),
+          type: Class,
+          collection: T::Boolean,
+          default: T.nilable(Proc),
+          doc: T.nilable(String),
+          kwargs: Object,
+          block: T.nilable(T.proc.void),
+        ).void
+      end
+      def attribute(name, type, collection: false, default: nil, doc: nil, **kwargs, &block)
+        super(name, type, collection: collection, default: default, **kwargs, &block)
+        attributes[name.to_sym]&.doc = doc # add doc to the attribute
         return unless type < ::Shale::Mapper
 
         if collection
@@ -120,6 +137,8 @@ module Shale
       end
 
     end
+
+    mixes_in_class_methods(ClassMethods)
 
   end
 end

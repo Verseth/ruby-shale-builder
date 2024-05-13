@@ -2,6 +2,7 @@
 # frozen_string_literal: true
 
 require 'shale'
+require 'booleans'
 begin
   require 'shale/builder'
 rescue LoadError
@@ -10,9 +11,12 @@ end
 module Tapioca
   module Compilers
     class Shale < Tapioca::Dsl::Compiler
+      extend T::Sig
       ConstantType = type_member { { fixed: T.class_of(::Shale::Mapper) } }
 
       class << self
+        extend T::Sig
+
         sig { override.returns(T::Enumerable[Module]) }
         def gather_constants
           # Collect all the classes that inherit from Shale::Mapper
@@ -28,10 +32,15 @@ module Tapioca
 
           # For each attribute defined in the class
           constant.attributes.each_value do |attribute|
+            attribute = T.let(attribute, ::Shale::Attribute)
             non_nilable_type, nilable_type = shale_type_to_sorbet_type(attribute)
             type = nilable_type
             if attribute.collection?
               type = "T.nilable(T::Array[#{non_nilable_type}])"
+            end
+            comments = T.let([], T::Array[RBI::Comment])
+            if shale_builder_defined? && attribute.doc
+              comments << RBI::Comment.new(T.must(attribute.doc))
             end
 
             if has_shale_builder && attribute.type < ::Shale::Mapper
@@ -49,10 +58,11 @@ module Tapioca
               klass.create_method_with_sigs(
                 attribute.name,
                 sigs: sigs,
+                comments: comments,
                 parameters: [RBI::BlockParam.new('block')],
               )
             else
-              klass.create_method(attribute.name, return_type: type)
+              klass.create_method(attribute.name, return_type: type, comments: comments)
             end
 
             # setter
@@ -60,6 +70,7 @@ module Tapioca
               "#{attribute.name}=",
               parameters: [create_param('value', type: type)],
               return_type: type,
+              comments: comments,
             )
           end
         end
@@ -74,6 +85,9 @@ module Tapioca
 
         klass < ::Shale::Builder
       end
+
+      sig { returns(T::Boolean) }
+      def shale_builder_defined? = Boolean(defined?(::Shale::Builder))
 
       SHALE_TYPES_MAP = T.let(
         {
