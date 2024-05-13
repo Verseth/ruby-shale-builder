@@ -2,6 +2,9 @@
 
 This addon to the [shale](https://github.com/kgiszczak/shale) Ruby gem adds a simple yet powerful builder DSL.
 
+It also adds support for sorbet and tapioca in shale.
+This gem includes a custom tapioca DSL compiler designed for shale.
+
 ## Installation
 
 Install the gem and add to the application's Gemfile by executing:
@@ -48,7 +51,11 @@ class Amount < Shale::Mapper
     include Shale::Builder
 
     attribute :value, Shale::Type::Float
-    attribute :currency, Shale::Type::String
+    attribute :currency, Shale::Type::String, doc: <<~DOC
+        This is some custom documentation that can be used by sorbet.
+        It will be used by the tapioca DSL compiler
+        to generate the RBI documentation for this attribute.
+    DOC
 end
 ```
 
@@ -64,6 +71,36 @@ You can do it like that:
 amount = Amount.build do |a|
     a.value = 2.3
     a.currency = 'PLN'
+end
+```
+
+If you use sorbet and run `bundle exec tapioca dsl` you'll get the following RBI file.
+
+```rb
+# typed: true
+
+class Amount
+  include ShaleAttributeMethods
+
+  module ShaleAttributeMethods
+    sig { returns(T.nilable(Float)) }
+    def value; end
+
+    sig { params(value: T.nilable(Float)).returns(T.nilable(Float)) }
+    def value=(value); end
+
+    # This is some custom documentation that can be used by sorbet.
+    # It will be used by the tapioca DSL compiler
+    # to generate the RBI documentation for this attribute.
+    sig { returns(T.nilable(String)) }
+    def currency; end
+
+    # This is some custom documentation that can be used by sorbet.
+    # It will be used by the tapioca DSL compiler
+    # to generate the RBI documentation for this attribute.
+    sig { params(value: T.nilable(String)).returns(T.nilable(String)) }
+    def currency=(value); end
+  end
 end
 ```
 
