@@ -1,3 +1,7 @@
+## [0.1.6] - 2024-05-13
+
+- Add support for doc strings in the tapioca compiler
+
 ## [0.1.5] - 2024-05-13
 
 - Fix a bug in the tapioca compiler
