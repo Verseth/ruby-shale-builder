@@ -34,8 +34,9 @@ module Tapioca
           mod = klass.create_module(SHALE_ATTRIBUTE_MODULE)
           klass.create_include(SHALE_ATTRIBUTE_MODULE)
           # For each attribute defined in the class
-          constant.attributes.each_value do |attribute|
-            attribute = T.let(attribute, ::Shale::Attribute)
+          attribute_names = constant.attributes.keys.sort
+          attribute_names.each do |attribute_name|
+            attribute = T.let(constant.attributes[attribute_name], ::Shale::Attribute)
             non_nilable_type, nilable_type = shale_type_to_sorbet_type(attribute)
             type = nilable_type
             if attribute.collection?

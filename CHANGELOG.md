@@ -1,3 +1,7 @@
+## [0.1.8] - 2024-05-15
+
+- Sort attribute names in the tapioca compiler
+
 ## [0.1.7] - 2024-05-13
 
 - Drop support for Ruby 3.0
