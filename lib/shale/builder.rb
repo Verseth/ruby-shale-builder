@@ -88,8 +88,8 @@ module Shale
         body
       end
 
-      sig { abstract.returns(T.attached_class) }
-      def new; end
+      sig { abstract.params(props: T.anything).returns(T.attached_class) }
+      def new(**props); end
 
       sig { abstract.returns(T::Hash[Symbol, Shale::Attribute]) }
       def attributes; end

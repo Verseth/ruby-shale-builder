@@ -1,3 +1,7 @@
+## [0.1.9] - 2024-06-03
+
+- Fix the signature of `new` class method
+
 ## [0.1.8] - 2024-05-15
 
 - Sort attribute names in the tapioca compiler
