@@ -1,3 +1,8 @@
+## [0.2.0] - 2024-06-11
+
+- Add support for `return_type` and `setter_type` in custom primitive shale types
+- Add a more thorough description of sorbet and tapioca support in the README
+
 ## [0.1.9] - 2024-06-03
 
 - Fix the signature of `new` class method

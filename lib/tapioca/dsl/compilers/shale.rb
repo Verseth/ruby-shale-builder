@@ -37,7 +37,7 @@ module Tapioca
           attribute_names = constant.attributes.keys.sort
           attribute_names.each do |attribute_name|
             attribute = T.let(constant.attributes[attribute_name], ::Shale::Attribute)
-            non_nilable_type, nilable_type = shale_type_to_sorbet_type(attribute)
+            non_nilable_type, nilable_type = shale_type_to_sorbet_return_type(attribute)
             type = nilable_type
             if attribute.collection?
               type = "T.nilable(T::Array[#{non_nilable_type}])"
@@ -67,6 +67,12 @@ module Tapioca
               )
             else
               mod.create_method(attribute.name, return_type: type, comments: comments)
+            end
+
+            non_nilable_type, nilable_type = shale_type_to_sorbet_setter_type(attribute)
+            type = nilable_type
+            if attribute.collection?
+              type = "T.nilable(T::Array[#{non_nilable_type}])"
             end
 
             # setter
@@ -106,20 +112,42 @@ module Tapioca
       )
 
       sig { params(attribute: ::Shale::Attribute).returns([String, String]) }
-      def shale_type_to_sorbet_type(attribute)
+      def shale_type_to_sorbet_return_type(attribute)
         return_type = SHALE_TYPES_MAP[attribute.type]
-        return complex_shale_type_to_sorbet_type(attribute) unless return_type
+        return complex_shale_type_to_sorbet_return_type(attribute) unless return_type
         return [T.must(return_type.name), T.must(return_type.name)] if attribute.collection? || attribute.default.is_a?(return_type)
 
         [T.must(return_type.name), "T.nilable(#{return_type.name})"]
       end
 
       sig { params(attribute: ::Shale::Attribute).returns([String, String]) }
-      def complex_shale_type_to_sorbet_type(attribute)
+      def complex_shale_type_to_sorbet_return_type(attribute)
         return [T.cast(attribute.type.to_s, String), "T.nilable(#{attribute.type})"] unless attribute.type.respond_to?(:return_type)
 
         return_type_string = attribute.type.return_type.to_s
         [return_type_string, return_type_string]
+      end
+
+      sig { params(attribute: ::Shale::Attribute).returns([String, String]) }
+      def shale_type_to_sorbet_setter_type(attribute)
+        setter_type = SHALE_TYPES_MAP[attribute.type]
+        return complex_shale_type_to_sorbet_setter_type(attribute) unless setter_type
+        return [T.must(setter_type.name), T.must(setter_type.name)] if attribute.collection? || attribute.default.is_a?(setter_type)
+
+        [T.must(setter_type.name), "T.nilable(#{setter_type.name})"]
+      end
+
+      sig { params(attribute: ::Shale::Attribute).returns([String, String]) }
+      def complex_shale_type_to_sorbet_setter_type(attribute)
+        if attribute.type.respond_to?(:setter_type)
+          setter_type_string = attribute.type.setter_type.to_s
+          [setter_type_string, setter_type_string]
+        elsif attribute.type.respond_to?(:return_type)
+          return_type_string = attribute.type.return_type.to_s
+          [return_type_string, return_type_string]
+        else
+          [T.cast(attribute.type.to_s, String), "T.nilable(#{attribute.type})"]
+        end
       end
 
     end
