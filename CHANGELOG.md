@@ -1,3 +1,7 @@
+## [0.2.1] - 2024-07-16
+
+- Add additional sorbet type documentation
+
 ## [0.2.0] - 2024-06-11
 
 - Add support for `return_type` and `setter_type` in custom primitive shale types
