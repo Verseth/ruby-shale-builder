@@ -48,23 +48,7 @@ module Tapioca
             end
 
             if has_shale_builder && attribute.type < ::Shale::Mapper
-              sigs = T.let([], T::Array[RBI::Sig])
-              # simple getter
-              sigs << klass.create_sig(
-                parameters: { block: 'NilClass' },
-                return_type: type,
-              )
-              # getter with block
-              sigs << klass.create_sig(
-                parameters: { block: "T.proc.params(arg0: #{non_nilable_type}).void" },
-                return_type: non_nilable_type
-              )
-              mod.create_method_with_sigs(
-                attribute.name,
-                sigs: sigs,
-                comments: comments,
-                parameters: [RBI::BlockParam.new('block')],
-              )
+              generate_mapper_getter(mod, attribute.name, type, non_nilable_type, comments)
             else
               mod.create_method(attribute.name, return_type: type, comments: comments)
             end
@@ -85,6 +69,53 @@ module Tapioca
           end
         end
 
+      end
+
+      sig do
+        params(
+          mod: RBI::Scope,
+          method_name: String,
+          type: String,
+          non_nilable_type: String,
+          comments: T::Array[RBI::Comment],
+        ).void
+      end
+      def generate_mapper_getter(mod, method_name, type, non_nilable_type, comments)
+        if mod.respond_to?(:create_sig)
+          # for tapioca < 0.16.0
+          sigs = T.let([], T::Array[RBI::Sig])
+          # simple getter
+          sigs << mod.create_sig(
+            parameters: { block: 'NilClass' },
+            return_type: type,
+          )
+          # getter with block
+          sigs << mod.create_sig(
+            parameters: { block: "T.proc.params(arg0: #{non_nilable_type}).void" },
+            return_type: non_nilable_type
+          )
+          mod.create_method_with_sigs(
+            method_name,
+            sigs: sigs,
+            comments: comments,
+            parameters: [RBI::BlockParam.new('block')],
+          )
+        else
+          # for tapioca >= 0.16.0
+          mod.create_method(method_name, comments: comments) do |method|
+            method.add_block_param('block')
+
+            method.add_sig do |sig|
+              sig.add_param('block', 'NilClass')
+              sig.return_type = type
+            end
+
+            method.add_sig do |sig|
+              sig.add_param('block', "T.proc.params(arg0: #{non_nilable_type}).void")
+              sig.return_type = non_nilable_type
+            end
+          end
+        end
       end
 
       private
