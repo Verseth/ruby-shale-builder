@@ -138,6 +138,7 @@ module Tapioca
           ::Shale::Type::Integer  => Integer,
           ::Shale::Type::Time     => Time,
           ::Shale::Type::Date     => Date,
+          ::Shale::Type::Boolean  => Object,
         }.freeze,
         T::Hash[Class, Class],
       )
