@@ -59,18 +59,18 @@ module Tapioca
 
             setter_type, nilable = shale_type_to_sorbet_setter_type(attribute)
             if attribute.collection?
-              setter_type = "T.nilable(T::Array[#{return_type}])"
+              setter_type_str = "T.nilable(T::Array[#{setter_type}])"
             elsif nilable
-              setter_type = "T.nilable(#{return_type})"
+              setter_type_str = "T.nilable(#{setter_type})"
             else
-              setter_type = return_type.to_s
+              setter_type_str = setter_type.to_s
             end
 
             # setter
             mod.create_method(
               "#{attribute.name}=",
-              parameters: [create_param('value', type: setter_type)],
-              return_type: setter_type,
+              parameters: [create_param('value', type: setter_type_str)],
+              return_type: setter_type_str,
               comments: comments,
             )
           end
