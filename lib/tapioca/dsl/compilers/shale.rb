@@ -37,33 +37,40 @@ module Tapioca
           attribute_names = constant.attributes.keys.sort
           attribute_names.each do |attribute_name|
             attribute = T.let(constant.attributes[attribute_name], ::Shale::Attribute)
-            non_nilable_type, nilable_type = shale_type_to_sorbet_return_type(attribute)
-            type = nilable_type
-            if attribute.collection?
-              type = "T.nilable(T::Array[#{non_nilable_type}])"
-            end
+            return_type, nilable = shale_type_to_sorbet_return_type(attribute)
             comments = T.let([], T::Array[RBI::Comment])
             if shale_builder_defined? && attribute.doc
               comments << RBI::Comment.new(T.must(attribute.doc))
             end
 
-            if has_shale_builder && attribute.type < ::Shale::Mapper
-              generate_mapper_getter(mod, attribute.name, type, non_nilable_type, comments)
+            if attribute.collection?
+              getter_without_block_type = "T.nilable(T::Array[#{return_type}])"
+            elsif nilable
+              getter_without_block_type = "T.nilable(#{return_type})"
             else
-              mod.create_method(attribute.name, return_type: type, comments: comments)
+              getter_without_block_type = return_type.to_s
             end
 
-            non_nilable_type, nilable_type = shale_type_to_sorbet_setter_type(attribute)
-            type = nilable_type
+            if has_shale_builder && attribute.type < ::Shale::Mapper
+              generate_mapper_getter(mod, attribute.name, return_type, getter_without_block_type, comments)
+            else
+              mod.create_method(attribute.name, return_type: getter_without_block_type, comments: comments)
+            end
+
+            setter_type, nilable = shale_type_to_sorbet_setter_type(attribute)
             if attribute.collection?
-              type = "T.nilable(T::Array[#{non_nilable_type}])"
+              setter_type_str = "T.nilable(T::Array[#{setter_type}])"
+            elsif nilable
+              setter_type_str = "T.nilable(#{setter_type})"
+            else
+              setter_type_str = setter_type.to_s
             end
 
             # setter
             mod.create_method(
               "#{attribute.name}=",
-              parameters: [create_param('value', type: type)],
-              return_type: type,
+              parameters: [create_param('value', type: setter_type_str)],
+              return_type: setter_type_str,
               comments: comments,
             )
           end
@@ -75,24 +82,25 @@ module Tapioca
         params(
           mod: RBI::Scope,
           method_name: String,
-          type: String,
-          non_nilable_type: String,
+          type: Object,
+          getter_without_block_type: String,
           comments: T::Array[RBI::Comment],
         ).void
       end
-      def generate_mapper_getter(mod, method_name, type, non_nilable_type, comments)
+      def generate_mapper_getter(mod, method_name, type, getter_without_block_type, comments)
         if mod.respond_to?(:create_sig)
           # for tapioca < 0.16.0
           sigs = T.let([], T::Array[RBI::Sig])
+
           # simple getter
           sigs << mod.create_sig(
             parameters: { block: 'NilClass' },
-            return_type: type,
+            return_type: getter_without_block_type,
           )
           # getter with block
           sigs << mod.create_sig(
-            parameters: { block: "T.proc.params(arg0: #{non_nilable_type}).void" },
-            return_type: non_nilable_type
+            parameters: { block: "T.proc.params(arg0: #{type}).void" },
+            return_type: type.to_s
           )
           mod.create_method_with_sigs(
             method_name,
@@ -107,12 +115,12 @@ module Tapioca
 
             method.add_sig do |sig|
               sig.add_param('block', 'NilClass')
-              sig.return_type = type
+              sig.return_type = getter_without_block_type
             end
 
             method.add_sig do |sig|
-              sig.add_param('block', "T.proc.params(arg0: #{non_nilable_type}).void")
-              sig.return_type = non_nilable_type
+              sig.add_param('block', "T.proc.params(arg0: #{type}).void")
+              sig.return_type = type.to_s
             end
           end
         end
@@ -130,7 +138,22 @@ module Tapioca
       sig { returns(T::Boolean) }
       def shale_builder_defined? = Boolean(defined?(::Shale::Builder))
 
-      SHALE_TYPES_MAP = T.let(
+      # Maps Shale return types to Sorbet types
+      SHALE_RETURN_TYPES_MAP = T.let(
+        {
+          ::Shale::Type::Value    => Object,
+          ::Shale::Type::String   => String,
+          ::Shale::Type::Float    => Float,
+          ::Shale::Type::Integer  => Integer,
+          ::Shale::Type::Time     => Time,
+          ::Shale::Type::Date     => Date,
+          ::Shale::Type::Boolean  => T::Boolean,
+        }.freeze,
+        T::Hash[Class, Object],
+      )
+
+      # Maps Shale setter types to Sorbet types
+      SHALE_SETTER_TYPES_MAP = T.let(
         {
           ::Shale::Type::Value    => Object,
           ::Shale::Type::String   => String,
@@ -140,45 +163,45 @@ module Tapioca
           ::Shale::Type::Date     => Date,
           ::Shale::Type::Boolean  => Object,
         }.freeze,
-        T::Hash[Class, Class],
+        T::Hash[Class, Object],
       )
 
-      sig { params(attribute: ::Shale::Attribute).returns([String, String]) }
+      sig { params(attribute: ::Shale::Attribute).returns([Object, T::Boolean]) }
       def shale_type_to_sorbet_return_type(attribute)
-        return_type = SHALE_TYPES_MAP[attribute.type]
+        return_type = SHALE_RETURN_TYPES_MAP[attribute.type]
         return complex_shale_type_to_sorbet_return_type(attribute) unless return_type
-        return [T.must(return_type.name), T.must(return_type.name)] if attribute.collection? || attribute.default.is_a?(return_type)
+        return return_type, false if attribute.collection? || return_type.is_a?(Module) && attribute.default.is_a?(return_type)
 
-        [T.must(return_type.name), "T.nilable(#{return_type.name})"]
+        [return_type, true]
       end
 
-      sig { params(attribute: ::Shale::Attribute).returns([String, String]) }
+      sig { params(attribute: ::Shale::Attribute).returns([Object, T::Boolean]) }
       def complex_shale_type_to_sorbet_return_type(attribute)
-        return [T.cast(attribute.type.to_s, String), "T.nilable(#{attribute.type})"] unless attribute.type.respond_to?(:return_type)
+        return attribute.type, true unless attribute.type.respond_to?(:return_type)
 
         return_type_string = attribute.type.return_type.to_s
-        [return_type_string, return_type_string]
+        [return_type_string, false]
       end
 
-      sig { params(attribute: ::Shale::Attribute).returns([String, String]) }
+      sig { params(attribute: ::Shale::Attribute).returns([Object, T::Boolean]) }
       def shale_type_to_sorbet_setter_type(attribute)
-        setter_type = SHALE_TYPES_MAP[attribute.type]
+        setter_type = SHALE_SETTER_TYPES_MAP[attribute.type]
         return complex_shale_type_to_sorbet_setter_type(attribute) unless setter_type
-        return [T.must(setter_type.name), T.must(setter_type.name)] if attribute.collection? || attribute.default.is_a?(setter_type)
+        return setter_type, false if attribute.collection? || setter_type.is_a?(Module) && attribute.default.is_a?(setter_type)
 
-        [T.must(setter_type.name), "T.nilable(#{setter_type.name})"]
+        [setter_type, true]
       end
 
-      sig { params(attribute: ::Shale::Attribute).returns([String, String]) }
+      sig { params(attribute: ::Shale::Attribute).returns([Object, T::Boolean]) }
       def complex_shale_type_to_sorbet_setter_type(attribute)
         if attribute.type.respond_to?(:setter_type)
-          setter_type_string = attribute.type.setter_type.to_s
-          [setter_type_string, setter_type_string]
+          setter_type_string = attribute.type.setter_type
+          [setter_type_string, false]
         elsif attribute.type.respond_to?(:return_type)
-          return_type_string = attribute.type.return_type.to_s
-          [return_type_string, return_type_string]
+          return_type_string = attribute.type.return_type
+          [return_type_string, false]
         else
-          [T.cast(attribute.type.to_s, String), "T.nilable(#{attribute.type})"]
+          [attribute.type, true]
         end
       end
 

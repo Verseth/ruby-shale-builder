@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    shale-builder (0.2.2)
+    shale-builder (0.2.4)
       booleans (>= 0.1)
       shale (< 2.0)
       sorbet-runtime (> 0.5)
