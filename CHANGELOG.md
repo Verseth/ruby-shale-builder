@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [Diff](https://github.com/Verseth/ruby-shale-builder/compare/v0.3.0...v0.2.1)
 
 ### Changes
-- Add additional sorbet type documentation
+- Add support for `BigDecimal`
 
 ## [0.2.1] - 2024-07-16
 
