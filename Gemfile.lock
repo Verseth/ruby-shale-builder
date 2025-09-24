@@ -12,6 +12,7 @@ GEM
     ast (2.4.2)
     backport (1.2.0)
     benchmark (0.2.1)
+    bigdecimal (3.2.3)
     booleans (0.1.1)
     byebug (11.1.3)
     diff-lcs (1.5.0)
@@ -58,7 +59,8 @@ GEM
     rubocop-espago (1.0.2)
       rubocop
     ruby-progressbar (1.11.0)
-    shale (0.9.0)
+    shale (1.2.2)
+      bigdecimal
     shoulda-context (2.0.0)
     solargraph (0.48.0)
       backport (~> 1.2)

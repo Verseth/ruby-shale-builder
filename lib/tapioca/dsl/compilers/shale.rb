@@ -3,6 +3,7 @@
 
 require 'shale'
 require 'booleans'
+require 'bigdecimal'
 begin
   require 'shale/builder'
 rescue LoadError
@@ -148,7 +149,9 @@ module Tapioca
           ::Shale::Type::Time     => Time,
           ::Shale::Type::Date     => Date,
           ::Shale::Type::Boolean  => T::Boolean,
-        }.freeze,
+        }.tap do |h|
+          h[::Shale::Type::Decimal] = BigDecimal if defined?(::Shale::Type::Decimal)
+        end.freeze,
         T::Hash[Class, Object],
       )
 
@@ -162,7 +165,11 @@ module Tapioca
           ::Shale::Type::Time     => Time,
           ::Shale::Type::Date     => Date,
           ::Shale::Type::Boolean  => Object,
-        }.freeze,
+        }.tap do |h|
+          if defined?(::Shale::Type::Decimal)
+            h[::Shale::Type::Decimal] = T.any(BigDecimal, String, Float, Integer, NilClass)
+          end
+        end.freeze,
         T::Hash[Class, Object],
       )
 

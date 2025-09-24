@@ -40,29 +40,39 @@
 #
 #   Shale.xml_adapter = Shale::Adapter::Ox
 #   Shale.xml_adapter # => Shale::Adapter::Ox
+# @example setting CSV adapter for handling CSV documents
+#   require 'shale/adapter/csv'
+#
+#   Shale.csv_adapter = Shale::Adapter::CSV
+#   Shale.csv_adapter # => Shale::Adapter::CSV
 #
 # source://shale//lib/shale/attribute.rb#3
 module Shale
   class << self
-    # Return CSV adapter. By default CSV is used
+    # Set CSV adapter
     #
     # @api public
-    # @example
+    # @example setting adapter
+    #   Shale.csv_adapter = Shale::Adapter::CSV
+    # @example getting adapter
     #   Shale.csv_adapter
     #   # => Shale::Adapter::CSV
-    # @return [.load, .dump]
+    # @param adapter [.load, .dump]
     #
-    # source://shale//lib/shale.rb#152
+    # source://shale//lib/shale.rb#113
     def csv_adapter; end
 
     # Set CSV adapter
     #
     # @api public
-    # @example
+    # @example setting adapter
     #   Shale.csv_adapter = Shale::Adapter::CSV
+    # @example getting adapter
+    #   Shale.csv_adapter
+    #   # => Shale::Adapter::CSV
     # @param adapter [.load, .dump]
     #
-    # source://shale//lib/shale.rb#100
+    # source://shale//lib/shale.rb#113
     def csv_adapter=(_arg0); end
 
     # Return JSON adapter. By default Shale::Adapter::JSON is used
@@ -73,7 +83,7 @@ module Shale
     #   # => Shale::Adapter::JSON
     # @return [.load, .dump]
     #
-    # source://shale//lib/shale.rb#126
+    # source://shale//lib/shale.rb#139
     def json_adapter; end
 
     # Set JSON adapter
@@ -83,33 +93,35 @@ module Shale
     #   Shale.json_adapter = Shale::Adapter::JSON
     # @param adapter [.load, .dump]
     #
-    # source://shale//lib/shale.rb#66
+    # source://shale//lib/shale.rb#74
     def json_adapter=(_arg0); end
 
-    # TOML adapter accessor.
+    # TOML adapter accessor. Available adapters are Shale::Adapter::Tomlib
+    # and Shale::Adapter::TomRB
     #
     # @api public
     # @example setting adapter
-    #   Shale.toml_adapter = Shale::Adapter::TomlRB
+    #   Shale.toml_adapter = Shale::Adapter::Tomlib
     # @example getting adapter
     #   Shale.toml_adapter
-    #   # => Shale::Adapter::TomlRB
-    # @param adapter [@see Shale::Adapter::TomlRB]
+    #   # => Shale::Adapter::Tomlib
+    # @param adapter [@see Shale::Adapter::Tomlib]
     #
-    # source://shale//lib/shale.rb#90
+    # source://shale//lib/shale.rb#99
     def toml_adapter; end
 
-    # TOML adapter accessor.
+    # TOML adapter accessor. Available adapters are Shale::Adapter::Tomlib
+    # and Shale::Adapter::TomRB
     #
     # @api public
     # @example setting adapter
-    #   Shale.toml_adapter = Shale::Adapter::TomlRB
+    #   Shale.toml_adapter = Shale::Adapter::Tomlib
     # @example getting adapter
     #   Shale.toml_adapter
-    #   # => Shale::Adapter::TomlRB
-    # @param adapter [@see Shale::Adapter::TomlRB]
+    #   # => Shale::Adapter::Tomlib
+    # @param adapter [@see Shale::Adapter::Tomlib]
     #
-    # source://shale//lib/shale.rb#90
+    # source://shale//lib/shale.rb#99
     def toml_adapter=(_arg0); end
 
     # XML adapter accessor. Available adapters are Shale::Adapter::REXML,
@@ -123,7 +135,7 @@ module Shale
     #   # => Shale::Adapter::REXML
     # @param adapter [@see Shale::Adapter::REXML]
     #
-    # source://shale//lib/shale.rb#115
+    # source://shale//lib/shale.rb#128
     def xml_adapter; end
 
     # XML adapter accessor. Available adapters are Shale::Adapter::REXML,
@@ -137,7 +149,7 @@ module Shale
     #   # => Shale::Adapter::REXML
     # @param adapter [@see Shale::Adapter::REXML]
     #
-    # source://shale//lib/shale.rb#115
+    # source://shale//lib/shale.rb#128
     def xml_adapter=(_arg0); end
 
     # Return YAML adapter. By default YAML is used
@@ -148,7 +160,7 @@ module Shale
     #   # => YAML
     # @return [.load, .dump]
     #
-    # source://shale//lib/shale.rb#139
+    # source://shale//lib/shale.rb#152
     def yaml_adapter; end
 
     # Set YAML adapter
@@ -158,44 +170,13 @@ module Shale
     #   Shale.yaml_adapter = YAML
     # @param adapter [.load, .dump]
     #
-    # source://shale//lib/shale.rb#76
+    # source://shale//lib/shale.rb#84
     def yaml_adapter=(_arg0); end
   end
 end
 
-# source://shale//lib/shale/adapter/csv.rb#6
+# source://shale//lib/shale/adapter/json.rb#6
 module Shale::Adapter; end
-
-# CSV adapter
-#
-# @api public
-#
-# source://shale//lib/shale/adapter/csv.rb#10
-class Shale::Adapter::CSV
-  class << self
-    # Serialize Array<Hash<String, any>> into CSV
-    #
-    # @api private
-    # @param obj [Array<Hash<String, any>>] Array<Hash<String, any>> object
-    # @param headers [Array<String>]
-    # @param options [Hash]
-    # @return [String]
-    #
-    # source://shale//lib/shale/adapter/csv.rb#33
-    def dump(obj, headers:, **options); end
-
-    # Parse CSV into Array<Hash<String, any>>
-    #
-    # @api private
-    # @param csv [String] CSV document
-    # @param headers [Array<String>]
-    # @param options [Hash]
-    # @return [Array<Hash<String, any>>]
-    #
-    # source://shale//lib/shale/adapter/csv.rb#20
-    def load(csv, headers:, **options); end
-  end
-end
 
 # JSON adapter
 #
@@ -208,20 +189,21 @@ class Shale::Adapter::JSON
     #
     # @api private
     # @param obj [Hash] Hash object
-    # @param pretty [true, false]
+    # @param options [Hash]
     # @return [String]
     #
-    # source://shale//lib/shale/adapter/json.rb#30
-    def dump(obj, pretty: T.unsafe(nil)); end
+    # source://shale//lib/shale/adapter/json.rb#31
+    def dump(obj, **options); end
 
     # Parse JSON into Hash
     #
     # @api private
     # @param json [String] JSON document
+    # @param options [Hash]
     # @return [Hash]
     #
-    # source://shale//lib/shale/adapter/json.rb#18
-    def load(json); end
+    # source://shale//lib/shale/adapter/json.rb#19
+    def load(json, **options); end
   end
 end
 
@@ -229,8 +211,8 @@ end
 #
 # @api private
 #
-# source://shale//lib/shale/error.rb#104
-class Shale::AdapterError < ::StandardError; end
+# source://shale//lib/shale/error.rb#141
+class Shale::AdapterError < ::Shale::ShaleError; end
 
 # Class representing object's attribute
 #
@@ -265,6 +247,13 @@ class Shale::Attribute
   # source://shale//lib/shale/attribute.rb#21
   def default; end
 
+  # source://shale-builder/0.2.4/lib/shale/attribute.rb#13
+  sig { returns(T.nilable(::String)) }
+  def doc; end
+
+  # source://shale-builder/0.2.4/lib/shale/attribute.rb#13
+  def doc=(_arg0); end
+
   # Return name
   #
   # @api private
@@ -287,12 +276,26 @@ class Shale::Attribute
   def type; end
 end
 
+# Raised when receiver attribute is not defined
+#
+# @api private
+#
+# source://shale//lib/shale/error.rb#123
+class Shale::AttributeNotDefinedError < ::Shale::ShaleError; end
+
+# Error message displayed when CSV adapter is not set
+#
+# @api private
+#
+# source://shale//lib/shale/error.rb#44
+Shale::CSV_ADAPTER_NOT_SET_MESSAGE = T.let(T.unsafe(nil), String)
+
 # Error for trying to assign not callable object as an attribute's default
 #
 # @api private
 #
-# source://shale//lib/shale/error.rb#59
-class Shale::DefaultNotCallableError < ::StandardError
+# source://shale//lib/shale/error.rb#78
+class Shale::DefaultNotCallableError < ::Shale::ShaleError
   # Initialize error object
   #
   # @api private
@@ -300,7 +303,7 @@ class Shale::DefaultNotCallableError < ::StandardError
   # @param attribute [String]
   # @return [DefaultNotCallableError] a new instance of DefaultNotCallableError
   #
-  # source://shale//lib/shale/error.rb#66
+  # source://shale//lib/shale/error.rb#85
   def initialize(record, attribute); end
 end
 
@@ -308,31 +311,31 @@ end
 #
 # @api private
 #
-# source://shale//lib/shale/error.rb#80
-class Shale::IncorrectMappingArgumentsError < ::StandardError; end
+# source://shale//lib/shale/error.rb#99
+class Shale::IncorrectMappingArgumentsError < ::Shale::ShaleError; end
 
 # Error for passing incorrect model type
 #
 # @api private
 #
-# source://shale//lib/shale/error.rb#74
-class Shale::IncorrectModelError < ::StandardError; end
+# source://shale//lib/shale/error.rb#93
+class Shale::IncorrectModelError < ::Shale::ShaleError; end
 
 # Base class used for mapping
 #
 # @api public
 # @example
 #   class Address < Shale::Mapper
-#   attribute :city, Shale::Type::String
-#   attribute :street, Shale::Type::String
-#   attribute :state, Shale::Type::Integer
-#   attribute :zip, Shale::Type::String
+#   attribute :city, :string
+#   attribute :street, :string
+#   attribute :state, :string
+#   attribute :zip, :string
 #   end
 #
 #   class Person < Shale::Mapper
-#   attribute :first_name, Shale::Type::String
-#   attribute :last_name, Shale::Type::String
-#   attribute :age, Shale::Type::Integer
+#   attribute :first_name, :string
+#   attribute :last_name, :string
+#   attribute :age, :integer
 #   attribute :address, Address
 #   end
 #
@@ -352,7 +355,7 @@ class Shale::IncorrectModelError < ::StandardError; end
 #
 #   person.to_json
 #
-# source://shale//lib/shale/mapper.rb#45
+# source://shale//lib/shale/mapper.rb#46
 class Shale::Mapper < ::Shale::Type::Complex
   # Initialize instance with properties
   #
@@ -371,7 +374,7 @@ class Shale::Mapper < ::Shale::Type::Complex
   # @raise [UnknownAttributeError] when attribute is not defined on the class
   # @return [Mapper] a new instance of Mapper
   #
-  # source://shale//lib/shale/mapper.rb#363
+  # source://shale//lib/shale/mapper.rb#369
   def initialize(**props); end
 
   class << self
@@ -379,11 +382,11 @@ class Shale::Mapper < ::Shale::Type::Complex
     #
     # @api public
     # @example
-    #   calss Person < Shale::Mapper
-    #   attribute :first_name, Shale::Type::String
-    #   attribute :last_name, Shale::Type::String
-    #   attribute :age, Shale::Type::Integer, default: -> { 1 }
-    #   attribute :hobbies, Shale::Type::String, collection: true
+    #   class Person < Shale::Mapper
+    #   attribute :first_name, :string
+    #   attribute :last_name, :string
+    #   attribute :age, :integer, default: -> { 1 }
+    #   attribute :hobbies, :string, collection: true
     #   end
     #
     #   person = Person.new
@@ -396,13 +399,14 @@ class Shale::Mapper < ::Shale::Type::Complex
     #
     #   person.hobbies << 'Dancing'
     #   person.hobbies # => ['Dancing']
-    # @param name [Symbol] Name of the attribute
-    # @param type [Shale::Type::Value] Type of the attribute
-    # @param collection [Boolean] Is the attribute a collection
+    # @param type [Symbol, Class<Shale::Type::Value>] Type of the attribute
     # @param default [Proc] Default value for the attribute
+    # @param collection [Boolean] Is the attribute a collection
+    # @param name [Symbol] Name of the attribute
     # @raise [DefaultNotCallableError] when attribute's default is not callable
+    # @raise [UnknownTypeError] when type is a symbol and not found in the registry
     #
-    # source://shale//lib/shale/mapper.rb#173
+    # source://shale//lib/shale/mapper.rb#175
     def attribute(name, type, collection: T.unsafe(nil), default: T.unsafe(nil)); end
 
     # Return attributes Hash
@@ -410,17 +414,17 @@ class Shale::Mapper < ::Shale::Type::Complex
     # @api public
     # @return [Hash<Symbol, Shale::Attribute>]
     #
-    # source://shale//lib/shale/mapper.rb#61
+    # source://shale//lib/shale/mapper.rb#62
     def attributes; end
 
     # Define CSV mapping
     #
     # @api public
     # @example
-    #   calss Person < Shale::Mapper
-    #   attribute :first_name, Shale::Type::String
-    #   attribute :last_name, Shale::Type::String
-    #   attribute :age, Shale::Type::Integer
+    #   class Person < Shale::Mapper
+    #   attribute :first_name, :string
+    #   attribute :last_name, :string
+    #   attribute :age, :integer
     #
     #   csv do
     #   map 'first_name', to: :first_name
@@ -430,7 +434,7 @@ class Shale::Mapper < ::Shale::Type::Complex
     #   end
     # @param block [Proc]
     #
-    # source://shale//lib/shale/mapper.rb#312
+    # source://shale//lib/shale/mapper.rb#318
     def csv(&block); end
 
     # Return CSV mapping object
@@ -438,7 +442,7 @@ class Shale::Mapper < ::Shale::Type::Complex
     # @api public
     # @return [Shale::Mapping::Dict]
     #
-    # source://shale//lib/shale/mapper.rb#96
+    # source://shale//lib/shale/mapper.rb#97
     def csv_mapping; end
 
     # Return Hash mapping object
@@ -446,17 +450,17 @@ class Shale::Mapper < ::Shale::Type::Complex
     # @api public
     # @return [Shale::Mapping::Dict]
     #
-    # source://shale//lib/shale/mapper.rb#68
+    # source://shale//lib/shale/mapper.rb#69
     def hash_mapping; end
 
     # Define Hash mapping
     #
     # @api public
     # @example
-    #   calss Person < Shale::Mapper
-    #   attribute :first_name, Shale::Type::String
-    #   attribute :last_name, Shale::Type::String
-    #   attribute :age, Shale::Type::Integer
+    #   class Person < Shale::Mapper
+    #   attribute :first_name, :string
+    #   attribute :last_name, :string
+    #   attribute :age, :integer
     #
     #   hsh do
     #   map 'firstName', to: :first_name
@@ -466,23 +470,23 @@ class Shale::Mapper < ::Shale::Type::Complex
     #   end
     # @param block [Proc]
     #
-    # source://shale//lib/shale/mapper.rb#216
+    # source://shale//lib/shale/mapper.rb#222
     def hsh(&block); end
 
     # @api private
     # @private
     #
-    # source://shale//lib/shale/mapper.rb#106
+    # source://shale//lib/shale/mapper.rb#107
     def inherited(subclass); end
 
     # Define JSON mapping
     #
     # @api public
     # @example
-    #   calss Person < Shale::Mapper
-    #   attribute :first_name, Shale::Type::String
-    #   attribute :last_name, Shale::Type::String
-    #   attribute :age, Shale::Type::Integer
+    #   class Person < Shale::Mapper
+    #   attribute :first_name, :string
+    #   attribute :last_name, :string
+    #   attribute :age, :integer
     #
     #   json do
     #   map 'firstName', to: :first_name
@@ -492,7 +496,7 @@ class Shale::Mapper < ::Shale::Type::Complex
     #   end
     # @param block [Proc]
     #
-    # source://shale//lib/shale/mapper.rb#240
+    # source://shale//lib/shale/mapper.rb#246
     def json(&block); end
 
     # Return JSON mapping object
@@ -500,22 +504,22 @@ class Shale::Mapper < ::Shale::Type::Complex
     # @api public
     # @return [Shale::Mapping::Dict]
     #
-    # source://shale//lib/shale/mapper.rb#75
+    # source://shale//lib/shale/mapper.rb#76
     def json_mapping; end
 
     # @api public
     #
-    # source://shale//lib/shale/mapper.rb#135
+    # source://shale//lib/shale/mapper.rb#136
     def model(klass = T.unsafe(nil)); end
 
     # Define TOML mapping
     #
     # @api public
     # @example
-    #   calss Person < Shale::Mapper
-    #   attribute :first_name, Shale::Type::String
-    #   attribute :last_name, Shale::Type::String
-    #   attribute :age, Shale::Type::Integer
+    #   class Person < Shale::Mapper
+    #   attribute :first_name, :string
+    #   attribute :last_name, :string
+    #   attribute :age, :integer
     #
     #   toml do
     #   map 'first_name', to: :first_name
@@ -525,7 +529,7 @@ class Shale::Mapper < ::Shale::Type::Complex
     #   end
     # @param block [Proc]
     #
-    # source://shale//lib/shale/mapper.rb#288
+    # source://shale//lib/shale/mapper.rb#294
     def toml(&block); end
 
     # Return TOML mapping object
@@ -533,17 +537,17 @@ class Shale::Mapper < ::Shale::Type::Complex
     # @api public
     # @return [Shale::Mapping::Dict]
     #
-    # source://shale//lib/shale/mapper.rb#89
+    # source://shale//lib/shale/mapper.rb#90
     def toml_mapping; end
 
     # Define XML mapping
     #
     # @api public
     # @example
-    #   calss Person < Shale::Mapper
-    #   attribute :first_name, Shale::Type::String
-    #   attribute :last_name, Shale::Type::String
-    #   attribute :age, Shale::Type::Integer
+    #   class Person < Shale::Mapper
+    #   attribute :first_name, :string
+    #   attribute :last_name, :string
+    #   attribute :age, :integer
     #
     #   xml do
     #   root 'Person'
@@ -554,7 +558,7 @@ class Shale::Mapper < ::Shale::Type::Complex
     #   end
     # @param block [Proc]
     #
-    # source://shale//lib/shale/mapper.rb#337
+    # source://shale//lib/shale/mapper.rb#343
     def xml(&block); end
 
     # Return XML mapping object
@@ -562,17 +566,17 @@ class Shale::Mapper < ::Shale::Type::Complex
     # @api public
     # @return [Shale::Mapping::XML]
     #
-    # source://shale//lib/shale/mapper.rb#103
+    # source://shale//lib/shale/mapper.rb#104
     def xml_mapping; end
 
     # Define YAML mapping
     #
     # @api public
     # @example
-    #   calss Person < Shale::Mapper
-    #   attribute :first_name, Shale::Type::String
-    #   attribute :last_name, Shale::Type::String
-    #   attribute :age, Shale::Type::Integer
+    #   class Person < Shale::Mapper
+    #   attribute :first_name, :string
+    #   attribute :last_name, :string
+    #   attribute :age, :integer
     #
     #   yaml do
     #   map 'first_name', to: :first_name
@@ -582,7 +586,7 @@ class Shale::Mapper < ::Shale::Type::Complex
     #   end
     # @param block [Proc]
     #
-    # source://shale//lib/shale/mapper.rb#264
+    # source://shale//lib/shale/mapper.rb#270
     def yaml(&block); end
 
     # Return YAML mapping object
@@ -590,13 +594,98 @@ class Shale::Mapper < ::Shale::Type::Complex
     # @api public
     # @return [Shale::Mapping::Dict]
     #
-    # source://shale//lib/shale/mapper.rb#82
+    # source://shale//lib/shale/mapper.rb#83
     def yaml_mapping; end
   end
 end
 
 # source://shale//lib/shale/mapping/descriptor/dict.rb#4
 module Shale::Mapping; end
+
+# Class for handling attribute delegation
+#
+# @api private
+#
+# source://shale//lib/shale/mapping/delegates.rb#8
+class Shale::Mapping::Delegates
+  # Initialize instance
+  #
+  # @api private
+  # @return [Delegates] a new instance of Delegates
+  #
+  # source://shale//lib/shale/mapping/delegates.rb#51
+  def initialize; end
+
+  # Add single value to delegate
+  #
+  # @api private
+  # @param receiver_attribute [Shale::Attribute]
+  # @param setter [String]
+  # @param value [any]
+  #
+  # source://shale//lib/shale/mapping/delegates.rb#62
+  def add(receiver_attribute, setter, value); end
+
+  # Add collection to delegate
+  #
+  # @api private
+  # @param receiver_attribute [Shale::Attribute]
+  # @param setter [String]
+  # @param value [any]
+  #
+  # source://shale//lib/shale/mapping/delegates.rb#73
+  def add_collection(receiver_attribute, setter, value); end
+
+  # Iterate over delegates and yield a block
+  #
+  # @api private
+  # @param block [Proc]
+  #
+  # source://shale//lib/shale/mapping/delegates.rb#90
+  def each(&block); end
+end
+
+# Class representing individual delegation
+#
+# @api private
+#
+# source://shale//lib/shale/mapping/delegates.rb#12
+class Shale::Mapping::Delegates::Delegate
+  # Initialize instance
+  #
+  # @api private
+  # @param receiver_attribute [Shale::Attribute]
+  # @param setter [String]
+  # @param value [any]
+  # @return [Delegate] a new instance of Delegate
+  #
+  # source://shale//lib/shale/mapping/delegates.rb#41
+  def initialize(receiver_attribute, setter, value); end
+
+  # Return receiver_attribute
+  #
+  # @api private
+  # @return [Shale::Attribute]
+  #
+  # source://shale//lib/shale/mapping/delegates.rb#18
+  def receiver_attribute; end
+
+  # Return attribute setter on a delegate
+  #
+  # @api private
+  # @return [String]
+  #
+  # source://shale//lib/shale/mapping/delegates.rb#25
+  def setter; end
+
+  # Return value to set on a delegate
+  #
+  # @api private
+  # @return [any]
+  #
+  # source://shale//lib/shale/mapping/delegates.rb#32
+  def value; end
+end
 
 # source://shale//lib/shale/mapping/descriptor/dict.rb#5
 module Shale::Mapping::Descriptor; end
@@ -612,13 +701,15 @@ class Shale::Mapping::Descriptor::Dict
   # @api private
   # @param name [String]
   # @param attribute [Symbol, nil]
-  # @param methods [Hash, nil]
+  # @param receiver [Symbol, nil]
   # @param group [String, nil]
   # @param render_nil [true, false]
+  # @param schema [Hash, nil]
+  # @param methods [Hash, nil]
   # @return [Dict] a new instance of Dict
   #
-  # source://shale//lib/shale/mapping/descriptor/dict.rb#54
-  def initialize(name:, attribute:, methods:, group:, render_nil:); end
+  # source://shale//lib/shale/mapping/descriptor/dict.rb#70
+  def initialize(name:, attribute:, receiver:, methods:, group:, render_nil:, schema: T.unsafe(nil)); end
 
   # Return attribute name
   #
@@ -633,7 +724,7 @@ class Shale::Mapping::Descriptor::Dict
   # @api private
   # @return [String]
   #
-  # source://shale//lib/shale/mapping/descriptor/dict.rb#43
+  # source://shale//lib/shale/mapping/descriptor/dict.rb#50
   def group; end
 
   # Return method symbol
@@ -641,7 +732,7 @@ class Shale::Mapping::Descriptor::Dict
   # @api private
   # @return [Symbol]
   #
-  # source://shale//lib/shale/mapping/descriptor/dict.rb#29
+  # source://shale//lib/shale/mapping/descriptor/dict.rb#36
   def method_from; end
 
   # Return method symbol
@@ -649,7 +740,7 @@ class Shale::Mapping::Descriptor::Dict
   # @api private
   # @return [Symbol]
   #
-  # source://shale//lib/shale/mapping/descriptor/dict.rb#36
+  # source://shale//lib/shale/mapping/descriptor/dict.rb#43
   def method_to; end
 
   # Return mapping name
@@ -660,13 +751,29 @@ class Shale::Mapping::Descriptor::Dict
   # source://shale//lib/shale/mapping/descriptor/dict.rb#15
   def name; end
 
+  # Return receiver name
+  #
+  # @api private
+  # @return [Symbol]
+  #
+  # source://shale//lib/shale/mapping/descriptor/dict.rb#29
+  def receiver; end
+
   # Check render_nil
   #
   # @api private
   # @return [true, false]
   #
-  # source://shale//lib/shale/mapping/descriptor/dict.rb#71
+  # source://shale//lib/shale/mapping/descriptor/dict.rb#89
   def render_nil?; end
+
+  # Return schema hash
+  #
+  # @api private
+  # @return [Hash]
+  #
+  # source://shale//lib/shale/mapping/descriptor/dict.rb#57
+  def schema; end
 end
 
 # Class representing XML attribute mapping
@@ -679,7 +786,8 @@ class Shale::Mapping::Descriptor::Xml < ::Shale::Mapping::Descriptor::Dict
   #
   # @api private
   # @param name [String]
-  # @param attribute [Symbol, String]
+  # @param attribute [Symbol, nil]
+  # @param receiver [Symbol, nil]
   # @param methods [Hash, nil]
   # @param namespace [Shale::Mapping::XmlNamespace]
   # @param cdata [true, false]
@@ -687,8 +795,8 @@ class Shale::Mapping::Descriptor::Xml < ::Shale::Mapping::Descriptor::Dict
   # @param group [String, nil]
   # @return [Xml] a new instance of Xml
   #
-  # source://shale//lib/shale/mapping/descriptor/xml.rb#37
-  def initialize(name:, attribute:, methods:, group:, namespace:, cdata:, render_nil:); end
+  # source://shale//lib/shale/mapping/descriptor/xml.rb#38
+  def initialize(name:, attribute:, receiver:, methods:, group:, namespace:, cdata:, render_nil:); end
 
   # Return cdata
   #
@@ -711,7 +819,7 @@ class Shale::Mapping::Descriptor::Xml < ::Shale::Mapping::Descriptor::Dict
   # @api private
   # @return [String]
   #
-  # source://shale//lib/shale/mapping/descriptor/xml.rb#64
+  # source://shale//lib/shale/mapping/descriptor/xml.rb#75
   def namespaced_name; end
 
   # Return name with XML prefix
@@ -719,7 +827,7 @@ class Shale::Mapping::Descriptor::Xml < ::Shale::Mapping::Descriptor::Dict
   # @api private
   # @return [String]
   #
-  # source://shale//lib/shale/mapping/descriptor/xml.rb#55
+  # source://shale//lib/shale/mapping/descriptor/xml.rb#66
   def prefixed_name; end
 end
 
@@ -772,7 +880,7 @@ class Shale::Mapping::Descriptor::XmlNamespace
   def prefix=(_arg0); end
 end
 
-# Mapping for dictionary serialization formats (Hash/JSON/YAML)
+# Mapping for dictionary serialization formats (Hash/JSON/YAML/TOML/CSV)
 #
 # @api private
 #
@@ -785,23 +893,33 @@ class Shale::Mapping::Dict < ::Shale::Mapping::DictBase
   # @param to [Symbol]
   # @param block [Proc]
   #
-  # source://shale//lib/shale/mapping/dict.rb#33
+  # source://shale//lib/shale/mapping/dict.rb#44
   def group(from:, to:, &block); end
 
   # Map key to attribute
   #
-  # @api private
+  # @api public
   # @param key [String] Document's key
-  # @param to [Symbol, nil] Object's attribute
-  # @param using [Hash, nil]
+  # @param to [Symbol, nil]
+  # @param receiver [Symbol, nil]
   # @param render_nil [true, false, nil]
+  # @param schema [Hash, nil]
+  # @param using [Hash, nil]
   # @raise [IncorrectMappingArgumentsError] when arguments are incorrect
   #
-  # source://shale//lib/shale/mapping/dict.rb#22
-  def map(key, to: T.unsafe(nil), using: T.unsafe(nil), render_nil: T.unsafe(nil)); end
+  # source://shale//lib/shale/mapping/dict.rb#24
+  def map(key, to: T.unsafe(nil), receiver: T.unsafe(nil), using: T.unsafe(nil), render_nil: T.unsafe(nil), schema: T.unsafe(nil)); end
+
+  # Set render_nil default
+  #
+  # @api private
+  # @param val [true, false]
+  #
+  # source://shale//lib/shale/mapping/dict.rb#33
+  def render_nil(val); end
 end
 
-# Base class for Mapping dictionary serialization formats (Hash/JSON/YAML)
+# Base class for Mapping dictionary serialization formats (Hash/JSON/YAML/TOML/CSV)
 #
 # @api private
 #
@@ -813,14 +931,14 @@ class Shale::Mapping::DictBase
   # @param render_nil_default [true, false]
   # @return [DictBase] a new instance of DictBase
   #
-  # source://shale//lib/shale/mapping/dict_base.rb#24
+  # source://shale//lib/shale/mapping/dict_base.rb#31
   def initialize(render_nil_default: T.unsafe(nil)); end
 
   # Set the "finalized" instance variable to true
   #
   # @api private
   #
-  # source://shale//lib/shale/mapping/dict_base.rb#55
+  # source://shale//lib/shale/mapping/dict_base.rb#85
   def finalize!; end
 
   # Query the "finalized" instance variable
@@ -828,7 +946,7 @@ class Shale::Mapping::DictBase
   # @api private
   # @return [truem false]
   #
-  # source://shale//lib/shale/mapping/dict_base.rb#64
+  # source://shale//lib/shale/mapping/dict_base.rb#94
   def finalized?; end
 
   # Return keys mapping hash
@@ -844,23 +962,44 @@ class Shale::Mapping::DictBase
   # @api private
   # @param key [String]
   # @param to [Symbol, nil]
-  # @param using [Hash, nil]
+  # @param receiver [Symbol, nil]
   # @param group [String, nil]
   # @param render_nil [true, false, nil]
+  # @param schema [Hash, nil]
+  # @param using [Hash, nil]
   # @raise [IncorrectMappingArgumentsError] when arguments are incorrect
   #
-  # source://shale//lib/shale/mapping/dict_base.rb#41
-  def map(key, to: T.unsafe(nil), using: T.unsafe(nil), group: T.unsafe(nil), render_nil: T.unsafe(nil)); end
+  # source://shale//lib/shale/mapping/dict_base.rb#51
+  def map(key, to: T.unsafe(nil), receiver: T.unsafe(nil), using: T.unsafe(nil), group: T.unsafe(nil), render_nil: T.unsafe(nil), schema: T.unsafe(nil)); end
+
+  # Allow schema properties to be set on the object
+  #
+  # @api public
+  # @param min_properties [Integer]
+  # @param max_properties [Integer]
+  # @param dependent_required [Hash]
+  # @param additional_properties [Boolean]
+  #
+  # source://shale//lib/shale/mapping/dict_base.rb#73
+  def properties(min_properties: T.unsafe(nil), max_properties: T.unsafe(nil), dependent_required: T.unsafe(nil), additional_properties: T.unsafe(nil)); end
+
+  # Return hash for hash with properties for root Object
+  #
+  # @api private
+  # @return [Hash]
+  #
+  # source://shale//lib/shale/mapping/dict_base.rb#24
+  def root; end
 
   private
 
   # @api private
   #
-  # source://shale//lib/shale/mapping/dict_base.rb#69
+  # source://shale//lib/shale/mapping/dict_base.rb#99
   def initialize_dup(other); end
 end
 
-# Group for dictionary serialization formats (Hash/JSON/YAML)
+# Group for dictionary serialization formats (Hash/JSON/YAML/TOML/CSV)
 #
 # @api private
 #
@@ -1029,12 +1168,13 @@ module Shale::Mapping::Validator
     #
     # @api private
     # @param key [String]
-    # @param to [Symbol]
-    # @param using [Hash]
+    # @param to [Symbol, nil]
+    # @param receiver [Symbol, nil]
+    # @param using [Hash, nil]
     # @raise [IncorrectMappingArgumentsError] when arguments are incorrect
     #
-    # source://shale//lib/shale/mapping/validator.rb#17
-    def validate_arguments(key, to, using); end
+    # source://shale//lib/shale/mapping/validator.rb#18
+    def validate_arguments(key, to, receiver, using); end
 
     # Validate correctness of namespace arguments
     #
@@ -1044,7 +1184,7 @@ module Shale::Mapping::Validator
     # @param prefix [String, Symbol, nil]
     # @raise [IncorrectMappingArgumentsError] when arguments are incorrect
     #
-    # source://shale//lib/shale/mapping/validator.rb#38
+    # source://shale//lib/shale/mapping/validator.rb#45
     def validate_namespace(key, namespace, prefix); end
   end
 end
@@ -1062,7 +1202,7 @@ class Shale::Mapping::Xml < ::Shale::Mapping::XmlBase
   # @param to [Symbol]
   # @param block [Proc]
   #
-  # source://shale//lib/shale/mapping/xml.rb#89
+  # source://shale//lib/shale/mapping/xml.rb#105
   def group(from:, to:, &block); end
 
   # Map document's attribute to object's attribute
@@ -1070,37 +1210,48 @@ class Shale::Mapping::Xml < ::Shale::Mapping::XmlBase
   # @api private
   # @param attribute [String]
   # @param to [Symbol, nil]
+  # @param receiver [Symbol, nil]
   # @param using [Hash, nil]
   # @param namespace [String, nil]
   # @param prefix [String, nil]
-  # @param render_nil [true, false]
+  # @param render_nil [true, false, nil]
   #
-  # source://shale//lib/shale/mapping/xml.rb#53
-  def map_attribute(attribute, to: T.unsafe(nil), using: T.unsafe(nil), namespace: T.unsafe(nil), prefix: T.unsafe(nil), render_nil: T.unsafe(nil)); end
+  # source://shale//lib/shale/mapping/xml.rb#57
+  def map_attribute(attribute, to: T.unsafe(nil), receiver: T.unsafe(nil), using: T.unsafe(nil), namespace: T.unsafe(nil), prefix: T.unsafe(nil), render_nil: T.unsafe(nil)); end
 
   # Map document's content to object's attribute
   #
   # @api private
   # @param to [Symbol]
+  # @param receiver [Symbol, nil]
   # @param using [Hash, nil]
   # @param cdata [true, false]
   #
-  # source://shale//lib/shale/mapping/xml.rb#78
-  def map_content(to: T.unsafe(nil), using: T.unsafe(nil), cdata: T.unsafe(nil)); end
+  # source://shale//lib/shale/mapping/xml.rb#85
+  def map_content(to: T.unsafe(nil), receiver: T.unsafe(nil), using: T.unsafe(nil), cdata: T.unsafe(nil)); end
 
   # Map element to attribute
   #
   # @api private
   # @param element [String]
   # @param to [Symbol, nil]
+  # @param receiver [Symbol, nil]
   # @param using [Hash, nil]
   # @param namespace [String, nil]
   # @param prefix [String, nil]
   # @param cdata [true, false]
-  # @param render_nil [true, false]
+  # @param render_nil [true, false, nil]
   #
-  # source://shale//lib/shale/mapping/xml.rb#23
-  def map_element(element, to: T.unsafe(nil), using: T.unsafe(nil), namespace: T.unsafe(nil), prefix: T.unsafe(nil), cdata: T.unsafe(nil), render_nil: T.unsafe(nil)); end
+  # source://shale//lib/shale/mapping/xml.rb#24
+  def map_element(element, to: T.unsafe(nil), receiver: T.unsafe(nil), using: T.unsafe(nil), namespace: T.unsafe(nil), prefix: T.unsafe(nil), cdata: T.unsafe(nil), render_nil: T.unsafe(nil)); end
+
+  # Set render_nil default
+  #
+  # @api private
+  # @param val [true, false]
+  #
+  # source://shale//lib/shale/mapping/xml.rb#94
+  def render_nil(val); end
 end
 
 # Base class for Mapping XML serialization format
@@ -1153,7 +1304,7 @@ class Shale::Mapping::XmlBase
   #
   # @api private
   #
-  # source://shale//lib/shale/mapping/xml_base.rb#201
+  # source://shale//lib/shale/mapping/xml_base.rb#212
   def finalize!; end
 
   # Query the "finalized" instance variable
@@ -1161,7 +1312,7 @@ class Shale::Mapping::XmlBase
   # @api private
   # @return [truem false]
   #
-  # source://shale//lib/shale/mapping/xml_base.rb#210
+  # source://shale//lib/shale/mapping/xml_base.rb#221
   def finalized?; end
 
   # Map document's attribute to object's attribute
@@ -1169,40 +1320,45 @@ class Shale::Mapping::XmlBase
   # @api private
   # @param attribute [String]
   # @param to [Symbol, nil]
+  # @param receiver [Symbol, nil]
   # @param using [Hash, nil]
-  # @param prefix [String, nil]
-  # @param render_nil [true, false]
   # @param namespace [String, nil]
+  # @param prefix [String, nil]
+  # @param render_nil [true, false, nil]
+  # @param group [String, nil]
   # @raise [IncorrectMappingArgumentsError] when arguments are incorrect
   #
-  # source://shale//lib/shale/mapping/xml_base.rb#132
-  def map_attribute(attribute, to: T.unsafe(nil), using: T.unsafe(nil), group: T.unsafe(nil), namespace: T.unsafe(nil), prefix: T.unsafe(nil), render_nil: T.unsafe(nil)); end
+  # source://shale//lib/shale/mapping/xml_base.rb#138
+  def map_attribute(attribute, to: T.unsafe(nil), receiver: T.unsafe(nil), using: T.unsafe(nil), group: T.unsafe(nil), namespace: T.unsafe(nil), prefix: T.unsafe(nil), render_nil: T.unsafe(nil)); end
 
   # Map document's content to object's attribute
   #
   # @api private
   # @param to [Symbol]
+  # @param receiver [Symbol, nil]
   # @param using [Hash, nil]
+  # @param group [String, nil]
   # @param cdata [true, false]
   #
-  # source://shale//lib/shale/mapping/xml_base.rb#164
-  def map_content(to: T.unsafe(nil), using: T.unsafe(nil), group: T.unsafe(nil), cdata: T.unsafe(nil)); end
+  # source://shale//lib/shale/mapping/xml_base.rb#174
+  def map_content(to: T.unsafe(nil), receiver: T.unsafe(nil), using: T.unsafe(nil), group: T.unsafe(nil), cdata: T.unsafe(nil)); end
 
   # Map element to attribute
   #
   # @api private
   # @param element [String]
   # @param to [Symbol, nil]
+  # @param receiver [Symbol, nil]
   # @param using [Hash, nil]
-  # @param group [String, nil]
+  # @param namespace [String, nil]
   # @param prefix [String, nil]
   # @param cdata [true, false]
-  # @param render_nil [true, false]
-  # @param namespace [String, nil]
+  # @param render_nil [true, false, nil]
+  # @param group [String, nil]
   # @raise [IncorrectMappingArgumentsError] when arguments are incorrect
   #
-  # source://shale//lib/shale/mapping/xml_base.rb#86
-  def map_element(element, to: T.unsafe(nil), using: T.unsafe(nil), group: T.unsafe(nil), namespace: T.unsafe(nil), prefix: T.unsafe(nil), cdata: T.unsafe(nil), render_nil: T.unsafe(nil)); end
+  # source://shale//lib/shale/mapping/xml_base.rb#88
+  def map_element(element, to: T.unsafe(nil), receiver: T.unsafe(nil), using: T.unsafe(nil), group: T.unsafe(nil), namespace: T.unsafe(nil), prefix: T.unsafe(nil), cdata: T.unsafe(nil), render_nil: T.unsafe(nil)); end
 
   # Set default namespace for root element
   #
@@ -1210,7 +1366,7 @@ class Shale::Mapping::XmlBase
   # @param name [String]
   # @param prefix [String]
   #
-  # source://shale//lib/shale/mapping/xml_base.rb#193
+  # source://shale//lib/shale/mapping/xml_base.rb#204
   def namespace(name, prefix); end
 
   # Return prefixed root
@@ -1226,7 +1382,7 @@ class Shale::Mapping::XmlBase
   # @api private
   # @param value [String] root's name
   #
-  # source://shale//lib/shale/mapping/xml_base.rb#183
+  # source://shale//lib/shale/mapping/xml_base.rb#194
   def root(value); end
 
   # Return unprefixed root
@@ -1241,7 +1397,7 @@ class Shale::Mapping::XmlBase
 
   # @api private
   #
-  # source://shale//lib/shale/mapping/xml_base.rb#215
+  # source://shale//lib/shale/mapping/xml_base.rb#226
   def initialize_dup(other); end
 end
 
@@ -1295,26 +1451,40 @@ class Shale::Mapping::XmlGroup < ::Shale::Mapping::XmlBase
   def name; end
 end
 
-# Error for passing incorrect arguments to schema generation function
+# Error for using incorrect type
 #
 # @api private
 #
-# source://shale//lib/shale/error.rb#86
-class Shale::NotAShaleMapperError < ::StandardError; end
+# source://shale//lib/shale/error.rb#105
+class Shale::NotAShaleMapperError < ::Shale::ShaleError; end
+
+# Error for registering class that is not a valid Type::Value
+#
+# @api private
+#
+# source://shale//lib/shale/error.rb#111
+class Shale::NotATypeValueError < ::Shale::ShaleError; end
 
 # Parsing error
 #
 # @api private
 #
-# source://shale//lib/shale/error.rb#98
-class Shale::ParseError < ::StandardError; end
+# source://shale//lib/shale/error.rb#135
+class Shale::ParseError < ::Shale::ShaleError; end
 
 # Schema compilation error
 #
 # @api private
 #
-# source://shale//lib/shale/error.rb#92
-class Shale::SchemaError < ::StandardError; end
+# source://shale//lib/shale/error.rb#129
+class Shale::SchemaError < ::Shale::ShaleError; end
+
+# Shale base error class
+#
+# @api private
+#
+# source://shale//lib/shale/error.rb#72
+class Shale::ShaleError < ::StandardError; end
 
 # Error message displayed when TOML adapter is not set
 #
@@ -1323,8 +1493,42 @@ class Shale::SchemaError < ::StandardError; end
 # source://shale//lib/shale/error.rb#6
 Shale::TOML_ADAPTER_NOT_SET_MESSAGE = T.let(T.unsafe(nil), String)
 
-# source://shale//lib/shale/type/value.rb#4
-module Shale::Type; end
+# source://shale//lib/shale/type.rb#4
+module Shale::Type
+  class << self
+    # Lookup a Shale::Type::Value class by type alias
+    #
+    # @api public
+    # @example
+    #
+    #   Shale::Type.lookup(:unix_timestamp)
+    #   # => UnixTimestamp
+    # @param type [Symbol] Type alias
+    # @raise [UnknownTypeError] when type is not registered
+    # @return [Shale::Type::Value] Class registered for type
+    #
+    # source://shale//lib/shale/type.rb#47
+    def lookup(type); end
+
+    # Register a symbol alias for a Shale::Type::Value class
+    #
+    # @api public
+    # @example
+    #   class UnixTimestamp < Shale::Type::Value
+    #   def self.cast(value)
+    #   Time.at(value.to_i)
+    #   end
+    #   end
+    #
+    #   Shale::Type.register(:unix_timestamp, UnixTimestamp)
+    # @param type [Symbol] Short type alias
+    # @param klass [Shale::Type::Value] Class to register
+    # @raise [NotATypeValueError] when klass is not a Shale::Type::Value
+    #
+    # source://shale//lib/shale/type.rb#23
+    def register(type, klass); end
+  end
+end
 
 # Cast value to Boolean
 #
@@ -1352,7 +1556,7 @@ Shale::Type::Boolean::FALSE_VALUES = T.let(T.unsafe(nil), Array)
 #
 # @api private
 #
-# source://shale//lib/shale/type/complex.rb#14
+# source://shale//lib/shale/type/complex.rb#15
 class Shale::Type::Complex < ::Shale::Type::Value
   # Convert Object to CSV
   #
@@ -1360,9 +1564,11 @@ class Shale::Type::Complex < ::Shale::Type::Value
   # @param only [Array<Symbol>]
   # @param except [Array<Symbol>]
   # @param context [any]
+  # @param headers [true, false]
+  # @param csv_options [Hash]
   # @return [String]
   #
-  # source://shale//lib/shale/type/complex.rb#900
+  # source://shale//lib/shale/type/complex.rb#1066
   def to_csv(only: T.unsafe(nil), except: T.unsafe(nil), context: T.unsafe(nil), headers: T.unsafe(nil), **csv_options); end
 
   # Convert Object to Hash
@@ -1373,7 +1579,7 @@ class Shale::Type::Complex < ::Shale::Type::Value
   # @param context [any]
   # @return [Hash]
   #
-  # source://shale//lib/shale/type/complex.rb#841
+  # source://shale//lib/shale/type/complex.rb#1001
   def to_hash(only: T.unsafe(nil), except: T.unsafe(nil), context: T.unsafe(nil)); end
 
   # Convert Object to JSON
@@ -1383,10 +1589,11 @@ class Shale::Type::Complex < ::Shale::Type::Value
   # @param except [Array<Symbol>]
   # @param context [any]
   # @param pretty [true, false]
+  # @param json_options [Hash]
   # @return [String]
   #
-  # source://shale//lib/shale/type/complex.rb#855
-  def to_json(only: T.unsafe(nil), except: T.unsafe(nil), context: T.unsafe(nil), pretty: T.unsafe(nil)); end
+  # source://shale//lib/shale/type/complex.rb#1016
+  def to_json(only: T.unsafe(nil), except: T.unsafe(nil), context: T.unsafe(nil), pretty: T.unsafe(nil), **json_options); end
 
   # Convert Object to TOML
   #
@@ -1394,10 +1601,11 @@ class Shale::Type::Complex < ::Shale::Type::Value
   # @param only [Array<Symbol>]
   # @param except [Array<Symbol>]
   # @param context [any]
+  # @param toml_options [Hash]
   # @return [String]
   #
-  # source://shale//lib/shale/type/complex.rb#887
-  def to_toml(only: T.unsafe(nil), except: T.unsafe(nil), context: T.unsafe(nil)); end
+  # source://shale//lib/shale/type/complex.rb#1051
+  def to_toml(only: T.unsafe(nil), except: T.unsafe(nil), context: T.unsafe(nil), **toml_options); end
 
   # Convert Object to XML
   #
@@ -1410,7 +1618,7 @@ class Shale::Type::Complex < ::Shale::Type::Value
   # @param pretty [true, false]
   # @return [String]
   #
-  # source://shale//lib/shale/type/complex.rb#923
+  # source://shale//lib/shale/type/complex.rb#1089
   def to_xml(only: T.unsafe(nil), except: T.unsafe(nil), context: T.unsafe(nil), pretty: T.unsafe(nil), declaration: T.unsafe(nil), encoding: T.unsafe(nil)); end
 
   # Convert Object to YAML
@@ -1419,22 +1627,23 @@ class Shale::Type::Complex < ::Shale::Type::Value
   # @param only [Array<Symbol>]
   # @param except [Array<Symbol>]
   # @param context [any]
+  # @param yaml_options [Hash]
   # @return [String]
   #
-  # source://shale//lib/shale/type/complex.rb#874
-  def to_yaml(only: T.unsafe(nil), except: T.unsafe(nil), context: T.unsafe(nil)); end
+  # source://shale//lib/shale/type/complex.rb#1037
+  def to_yaml(only: T.unsafe(nil), except: T.unsafe(nil), context: T.unsafe(nil), **yaml_options); end
 
   class << self
-    # source://shale//lib/shale/type/complex.rb#129
+    # source://shale//lib/shale/type/complex.rb#146
     def as_csv(instance, only: T.unsafe(nil), except: T.unsafe(nil), context: T.unsafe(nil)); end
 
-    # source://shale//lib/shale/type/complex.rb#129
+    # source://shale//lib/shale/type/complex.rb#146
     def as_hash(instance, only: T.unsafe(nil), except: T.unsafe(nil), context: T.unsafe(nil)); end
 
-    # source://shale//lib/shale/type/complex.rb#129
+    # source://shale//lib/shale/type/complex.rb#146
     def as_json(instance, only: T.unsafe(nil), except: T.unsafe(nil), context: T.unsafe(nil)); end
 
-    # source://shale//lib/shale/type/complex.rb#124
+    # source://shale//lib/shale/type/complex.rb#141
     def as_toml(instance, only: T.unsafe(nil), except: T.unsafe(nil), context: T.unsafe(nil)); end
 
     # Convert Object to XML document
@@ -1449,10 +1658,10 @@ class Shale::Type::Complex < ::Shale::Type::Value
     # @raise [IncorrectModelError]
     # @return [::REXML::Document, ::Nokogiri::Document, ::Ox::Document]
     #
-    # source://shale//lib/shale/type/complex.rb#574
+    # source://shale//lib/shale/type/complex.rb#646
     def as_xml(instance, node_name = T.unsafe(nil), doc = T.unsafe(nil), _cdata = T.unsafe(nil), only: T.unsafe(nil), except: T.unsafe(nil), context: T.unsafe(nil), version: T.unsafe(nil)); end
 
-    # source://shale//lib/shale/type/complex.rb#129
+    # source://shale//lib/shale/type/complex.rb#146
     def as_yaml(instance, only: T.unsafe(nil), except: T.unsafe(nil), context: T.unsafe(nil)); end
 
     # Convert CSV to Object
@@ -1466,12 +1675,12 @@ class Shale::Type::Complex < ::Shale::Type::Value
     # @param context [any]
     # @return [model instance]
     #
-    # source://shale//lib/shale/type/complex.rb#351
+    # source://shale//lib/shale/type/complex.rb#383
     def from_csv(csv, only: T.unsafe(nil), except: T.unsafe(nil), context: T.unsafe(nil), headers: T.unsafe(nil), **csv_options); end
 
     # @api private
     #
-    # source://shale//lib/shale/type/complex.rb#28
+    # source://shale//lib/shale/type/complex.rb#29
     def from_hash(hash, only: T.unsafe(nil), except: T.unsafe(nil), context: T.unsafe(nil)); end
 
     # Convert JSON to Object
@@ -1481,10 +1690,11 @@ class Shale::Type::Complex < ::Shale::Type::Value
     # @param only [Array<Symbol>]
     # @param except [Array<Symbol>]
     # @param context [any]
+    # @param json_options [Hash]
     # @return [model instance]
     #
-    # source://shale//lib/shale/type/complex.rb#240
-    def from_json(json, only: T.unsafe(nil), except: T.unsafe(nil), context: T.unsafe(nil)); end
+    # source://shale//lib/shale/type/complex.rb#265
+    def from_json(json, only: T.unsafe(nil), except: T.unsafe(nil), context: T.unsafe(nil), **json_options); end
 
     # Convert TOML to Object
     #
@@ -1493,10 +1703,11 @@ class Shale::Type::Complex < ::Shale::Type::Value
     # @param only [Array<Symbol>]
     # @param except [Array<Symbol>]
     # @param context [any]
+    # @param toml_options [Hash]
     # @return [model instance]
     #
-    # source://shale//lib/shale/type/complex.rb#312
-    def from_toml(toml, only: T.unsafe(nil), except: T.unsafe(nil), context: T.unsafe(nil)); end
+    # source://shale//lib/shale/type/complex.rb#342
+    def from_toml(toml, only: T.unsafe(nil), except: T.unsafe(nil), context: T.unsafe(nil), **toml_options); end
 
     # Convert XML to Object
     #
@@ -1508,7 +1719,7 @@ class Shale::Type::Complex < ::Shale::Type::Value
     # @raise [AdapterError]
     # @return [model instance]
     #
-    # source://shale//lib/shale/type/complex.rb#550
+    # source://shale//lib/shale/type/complex.rb#622
     def from_xml(xml, only: T.unsafe(nil), except: T.unsafe(nil), context: T.unsafe(nil)); end
 
     # Convert YAML to Object
@@ -1518,21 +1729,22 @@ class Shale::Type::Complex < ::Shale::Type::Value
     # @param only [Array<Symbol>]
     # @param except [Array<Symbol>]
     # @param context [any]
+    # @param yaml_options [Hash]
     # @return [model instance]
     #
-    # source://shale//lib/shale/type/complex.rb#277
-    def from_yaml(yaml, only: T.unsafe(nil), except: T.unsafe(nil), context: T.unsafe(nil)); end
+    # source://shale//lib/shale/type/complex.rb#304
+    def from_yaml(yaml, only: T.unsafe(nil), except: T.unsafe(nil), context: T.unsafe(nil), **yaml_options); end
 
-    # source://shale//lib/shale/type/complex.rb#28
+    # source://shale//lib/shale/type/complex.rb#29
     def of_csv(hash, only: T.unsafe(nil), except: T.unsafe(nil), context: T.unsafe(nil)); end
 
-    # source://shale//lib/shale/type/complex.rb#28
+    # source://shale//lib/shale/type/complex.rb#29
     def of_hash(hash, only: T.unsafe(nil), except: T.unsafe(nil), context: T.unsafe(nil)); end
 
-    # source://shale//lib/shale/type/complex.rb#28
+    # source://shale//lib/shale/type/complex.rb#29
     def of_json(hash, only: T.unsafe(nil), except: T.unsafe(nil), context: T.unsafe(nil)); end
 
-    # source://shale//lib/shale/type/complex.rb#28
+    # source://shale//lib/shale/type/complex.rb#29
     def of_toml(hash, only: T.unsafe(nil), except: T.unsafe(nil), context: T.unsafe(nil)); end
 
     # Convert XML document to Object
@@ -1544,10 +1756,10 @@ class Shale::Type::Complex < ::Shale::Type::Value
     # @param context [any]
     # @return [model instance]
     #
-    # source://shale//lib/shale/type/complex.rb#408
+    # source://shale//lib/shale/type/complex.rb#442
     def of_xml(element, only: T.unsafe(nil), except: T.unsafe(nil), context: T.unsafe(nil)); end
 
-    # source://shale//lib/shale/type/complex.rb#28
+    # source://shale//lib/shale/type/complex.rb#29
     def of_yaml(hash, only: T.unsafe(nil), except: T.unsafe(nil), context: T.unsafe(nil)); end
 
     # Convert Object to CSV
@@ -1561,12 +1773,12 @@ class Shale::Type::Complex < ::Shale::Type::Value
     # @param context [any]
     # @return [String]
     #
-    # source://shale//lib/shale/type/complex.rb#376
+    # source://shale//lib/shale/type/complex.rb#409
     def to_csv(instance, only: T.unsafe(nil), except: T.unsafe(nil), context: T.unsafe(nil), headers: T.unsafe(nil), **csv_options); end
 
     # @api private
     #
-    # source://shale//lib/shale/type/complex.rb#129
+    # source://shale//lib/shale/type/complex.rb#146
     def to_hash(instance, only: T.unsafe(nil), except: T.unsafe(nil), context: T.unsafe(nil)); end
 
     # Convert Object to JSON
@@ -1575,12 +1787,13 @@ class Shale::Type::Complex < ::Shale::Type::Value
     # @param instance [model instance] Object to convert
     # @param only [Array<Symbol>]
     # @param except [Array<Symbol>]
-    # @param context [any]
     # @param pretty [true, false]
+    # @param json_options [Hash]
+    # @param context [any]
     # @return [String]
     #
-    # source://shale//lib/shale/type/complex.rb#260
-    def to_json(instance, only: T.unsafe(nil), except: T.unsafe(nil), context: T.unsafe(nil), pretty: T.unsafe(nil)); end
+    # source://shale//lib/shale/type/complex.rb#286
+    def to_json(instance, only: T.unsafe(nil), except: T.unsafe(nil), context: T.unsafe(nil), pretty: T.unsafe(nil), **json_options); end
 
     # Convert Object to TOML
     #
@@ -1589,10 +1802,11 @@ class Shale::Type::Complex < ::Shale::Type::Value
     # @param only [Array<Symbol>]
     # @param except [Array<Symbol>]
     # @param context [any]
+    # @param toml_options [Hash]
     # @return [String]
     #
-    # source://shale//lib/shale/type/complex.rb#332
-    def to_toml(instance, only: T.unsafe(nil), except: T.unsafe(nil), context: T.unsafe(nil)); end
+    # source://shale//lib/shale/type/complex.rb#363
+    def to_toml(instance, only: T.unsafe(nil), except: T.unsafe(nil), context: T.unsafe(nil), **toml_options); end
 
     # Convert Object to XML
     #
@@ -1607,7 +1821,7 @@ class Shale::Type::Complex < ::Shale::Type::Value
     # @raise [AdapterError]
     # @return [String]
     #
-    # source://shale//lib/shale/type/complex.rb#774
+    # source://shale//lib/shale/type/complex.rb#867
     def to_xml(instance, only: T.unsafe(nil), except: T.unsafe(nil), context: T.unsafe(nil), pretty: T.unsafe(nil), declaration: T.unsafe(nil), encoding: T.unsafe(nil)); end
 
     # Convert Object to YAML
@@ -1617,12 +1831,34 @@ class Shale::Type::Complex < ::Shale::Type::Value
     # @param only [Array<Symbol>]
     # @param except [Array<Symbol>]
     # @param context [any]
+    # @param yaml_options [Hash]
     # @return [String]
     #
-    # source://shale//lib/shale/type/complex.rb#296
-    def to_yaml(instance, only: T.unsafe(nil), except: T.unsafe(nil), context: T.unsafe(nil)); end
+    # source://shale//lib/shale/type/complex.rb#324
+    def to_yaml(instance, only: T.unsafe(nil), except: T.unsafe(nil), context: T.unsafe(nil), **yaml_options); end
 
     private
+
+    # Get receiver for given mapping
+    #
+    # @api private
+    # @param instance [any]
+    # @param receiver_attribute [Shale::Attribute]
+    # @return [Array]
+    #
+    # source://shale//lib/shale/type/complex.rb#974
+    def get_receiver(instance, receiver_attribute); end
+
+    # Get receiver attributes for given mapping
+    #
+    # @api private
+    # @param mapping [Shale::Mapping::Descriptor::Dict]
+    # @raise [AttributeNotDefinedError]
+    # @raise [NotAShaleMapperError]
+    # @return [Hash<Symbol, Shale::Attribute>]
+    #
+    # source://shale//lib/shale/type/complex.rb#943
+    def get_receiver_attributes(mapping); end
 
     # Convert array with attributes to a hash
     #
@@ -1630,15 +1866,23 @@ class Shale::Type::Complex < ::Shale::Type::Value
     # @param ary [Array]
     # @return [Hash, nil]
     #
-    # source://shale//lib/shale/type/complex.rb#819
+    # source://shale//lib/shale/type/complex.rb#921
     def to_partial_render_attributes(ary); end
+
+    # Validate CSV adapter
+    #
+    # @api private
+    # @raise [AdapterError]
+    #
+    # source://shale//lib/shale/type/complex.rb#910
+    def validate_csv_adapter; end
 
     # Validate TOML adapter
     #
     # @api private
     # @raise [AdapterError]
     #
-    # source://shale//lib/shale/type/complex.rb#799
+    # source://shale//lib/shale/type/complex.rb#892
     def validate_toml_adapter; end
 
     # Validate XML adapter
@@ -1646,7 +1890,7 @@ class Shale::Type::Complex < ::Shale::Type::Value
     # @api private
     # @raise [AdapterError]
     #
-    # source://shale//lib/shale/type/complex.rb#808
+    # source://shale//lib/shale/type/complex.rb#901
     def validate_xml_adapter; end
   end
 end
@@ -1699,6 +1943,47 @@ class Shale::Type::Date < ::Shale::Type::Value
     # @return [Date, nil]
     #
     # source://shale//lib/shale/type/date.rb#17
+    def cast(value); end
+  end
+end
+
+# Cast value to BigDecimal
+#
+# @api public
+#
+# source://shale//lib/shale/type/decimal.rb#10
+class Shale::Type::Decimal < ::Shale::Type::Value
+  class << self
+    # @api public
+    #
+    # source://shale//lib/shale/type/decimal.rb#35
+    def as_csv(value, **_arg1); end
+
+    # @api public
+    #
+    # source://shale//lib/shale/type/decimal.rb#27
+    def as_json(value, **_arg1); end
+
+    # @api public
+    #
+    # source://shale//lib/shale/type/decimal.rb#39
+    def as_toml(value, **_arg1); end
+
+    # @api public
+    #
+    # source://shale//lib/shale/type/decimal.rb#43
+    def as_xml_value(value, **_arg1); end
+
+    # @api public
+    #
+    # source://shale//lib/shale/type/decimal.rb#31
+    def as_yaml(value, **_arg1); end
+
+    # @api private
+    # @param value [String, Float, Integer, nil] Value to cast
+    # @return [BigDecimal, nil]
+    #
+    # source://shale//lib/shale/type/decimal.rb#17
     def cast(value); end
   end
 end
@@ -1948,7 +2233,7 @@ end
 #
 # @api private
 #
-# source://shale//lib/shale/error.rb#44
+# source://shale//lib/shale/error.rb#57
 class Shale::UnknownAttributeError < ::NoMethodError
   # Initialize error object
   #
@@ -1957,9 +2242,16 @@ class Shale::UnknownAttributeError < ::NoMethodError
   # @param attribute [String]
   # @return [UnknownAttributeError] a new instance of UnknownAttributeError
   #
-  # source://shale//lib/shale/error.rb#51
+  # source://shale//lib/shale/error.rb#64
   def initialize(record, attribute); end
 end
+
+# Error for using unknown symbol type
+#
+# @api private
+#
+# source://shale//lib/shale/error.rb#117
+class Shale::UnknownTypeError < ::Shale::ShaleError; end
 
 # Utitlity functions
 #
@@ -1976,7 +2268,7 @@ module Shale::Utils
     #   # => 'Foobar'
     # @param val [String]
     #
-    # source://shale//lib/shale/utils.rb#17
+    # source://shale//lib/shale/utils.rb#32
     def classify(str); end
 
     # Return value or nil if value is empty
@@ -1987,7 +2279,7 @@ module Shale::Utils
     #   Shale::Utils.presence('') # => nil
     # @param value [String]
     #
-    # source://shale//lib/shale/utils.rb#70
+    # source://shale//lib/shale/utils.rb#88
     def presence(value); end
 
     # Convert string to snake case
@@ -1998,7 +2290,7 @@ module Shale::Utils
     #   # => 'foo_bar'
     # @param val [String]
     #
-    # source://shale//lib/shale/utils.rb#38
+    # source://shale//lib/shale/utils.rb#54
     def snake_case(str); end
 
     # Convert word to under score
@@ -2009,8 +2301,19 @@ module Shale::Utils
     #   Shale::Utils.underscore('Namespace::FooBar') # => foo_bar
     # @param word [String]
     #
-    # source://shale//lib/shale/utils.rb#57
+    # source://shale//lib/shale/utils.rb#75
     def underscore(str); end
+
+    # Upcase first letter of a string
+    #
+    # @api private
+    # @example
+    #   Shale::Utils.upcase_first('fooBar')
+    #   # => 'FooBar'
+    # @param val [String]
+    #
+    # source://shale//lib/shale/utils.rb#17
+    def upcase_first(str); end
   end
 end
 
@@ -2023,5 +2326,5 @@ Shale::VERSION = T.let(T.unsafe(nil), String)
 #
 # @api private
 #
-# source://shale//lib/shale/error.rb#22
+# source://shale//lib/shale/error.rb#23
 Shale::XML_ADAPTER_NOT_SET_MESSAGE = T.let(T.unsafe(nil), String)
