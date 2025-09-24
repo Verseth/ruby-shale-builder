@@ -152,7 +152,7 @@ module Tapioca
         }.tap do |h|
           h[::Shale::Type::Decimal] = BigDecimal if defined?(::Shale::Type::Decimal)
         end.freeze,
-        T::Hash[Class, Object]
+        T::Hash[Class, Object],
       )
 
       # Maps Shale setter types to Sorbet types
