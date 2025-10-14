@@ -52,12 +52,6 @@ module Tapioca
               getter_without_block_type = return_type.to_s
             end
 
-            if has_shale_builder && attribute.type < ::Shale::Mapper
-              generate_mapper_getter(mod, attribute.name, return_type, getter_without_block_type, comments)
-            else
-              mod.create_method(attribute.name, return_type: getter_without_block_type, comments: comments)
-            end
-
             setter_type, nilable = shale_type_to_sorbet_setter_type(attribute)
             if attribute.collection?
               setter_type_str = "T.nilable(T::Array[#{setter_type}])"
@@ -67,13 +61,22 @@ module Tapioca
               setter_type_str = setter_type.to_s
             end
 
-            # setter
-            mod.create_method(
-              "#{attribute.name}=",
-              parameters: [create_param('value', type: setter_type_str)],
-              return_type: setter_type_str,
-              comments: comments,
-            )
+            attribute.all_names.each do |name|
+              name_str = name.to_s
+              if has_shale_builder && attribute.type < ::Shale::Mapper
+                generate_mapper_getter(mod, name_str, return_type, getter_without_block_type, comments)
+              else
+                mod.create_method(name_str, return_type: getter_without_block_type, comments: comments)
+              end
+
+              # setter
+              mod.create_method(
+                "#{name_str}=",
+                parameters: [create_param('value', type: setter_type_str)],
+                return_type: setter_type_str,
+                comments: comments,
+              )
+            end
           end
         end
 
@@ -90,6 +93,7 @@ module Tapioca
       end
       def generate_mapper_getter(mod, method_name, type, getter_without_block_type, comments)
         if mod.respond_to?(:create_sig)
+          mod = T.unsafe(mod)
           # for tapioca < 0.16.0
           sigs = T.let([], T::Array[RBI::Sig])
 

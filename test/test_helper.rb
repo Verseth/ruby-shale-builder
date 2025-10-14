@@ -2,6 +2,7 @@
 
 $LOAD_PATH.unshift ::File.expand_path('../lib', __dir__)
 require 'shale/builder'
+require 'shale/builder/nested_validations'
 
 require 'minitest/autorun'
 require 'shoulda-context'

@@ -1,4 +1,6 @@
 --dir
 .
+--enable-experimental-requires-ancestor
+--enable-experimental-rbs-comments
 --ignore=tmp/
 --ignore=vendor/

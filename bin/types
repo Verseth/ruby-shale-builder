@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+bundle exec tapioca annotations
+bundle exec tapioca gems $@
+bundle exec tapioca dsl $@

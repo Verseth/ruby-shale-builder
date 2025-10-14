@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require 'test_helper'
+require 'active_model'
+require 'active_model/validations'
 
 class Shale::BuilderTest < ::Minitest::Test
   should 'have a version number' do
@@ -9,9 +11,13 @@ class Shale::BuilderTest < ::Minitest::Test
 
   class TestAmountType < ::Shale::Mapper
     include ::Shale::Builder
+    include ::ActiveModel::Validations
+    include ::Shale::Builder::NestedValidations
 
     attribute :value, ::Shale::Type::Float
     attribute :currency, ::Shale::Type::String
+
+    validates :value, presence: true
   end
 
   class TestTransactionResponseType < ::Shale::Mapper
@@ -24,9 +30,14 @@ class Shale::BuilderTest < ::Minitest::Test
 
   class TestTransactionType < ::Shale::Mapper
     include ::Shale::Builder
+    include ::ActiveModel::Validations
+    include ::Shale::Builder::NestedValidations
 
     attribute :cvv_code, ::Shale::Type::String
     attribute :amount, TestAmountType
+
+    validates :cvv_code, presence: true
+    validates :amount, presence: true
   end
 
   class TestClientDataType < ::Shale::Mapper
@@ -131,13 +142,34 @@ class Shale::BuilderTest < ::Minitest::Test
 
     expected = {
       'cvv_code' => '123',
-      'amount' => {
-        'value' => 123.10,
-        'currency' => 'PLN'
-      }
+      'amount'   => {
+        'value'    => 123.10,
+        'currency' => 'PLN',
+      },
     }
     assert test_object.transaction.is_a?(TestTransactionType)
     assert_equal expected, test_object.transaction.to_hash
+  end
+
+
+  should 'build an object and validate it' do
+    obj = TestTransactionType.build do |t|
+      t.amount do |a|
+        a.currency = 'USD'
+      end
+    end
+
+    assert_equal false, obj.valid?
+    errs = obj.errors.entries
+    assert_equal 2, errs.length
+
+    err = errs[0]
+    assert_equal :cvv_code, err.attribute
+    assert_equal :blank, err.type
+
+    err = errs[1]
+    assert_equal :'amount.value', err.attribute
+    assert_equal :blank, err.type
   end
 
   should 'build an object through the DSL' do
@@ -198,7 +230,7 @@ class Shale::BuilderTest < ::Minitest::Test
     obj = TestTransactionType.build do |t|
       t.cvv_code = '321'
       t.amount = TestAmountType.new(
-        value: 45.0,
+        value:    45.0,
         currency: 'USD'
       )
     end

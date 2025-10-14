@@ -4,4 +4,5 @@ IFS=$'\n\t'
 set -vx
 
 bundle exec rubocop --parallel --color
+bundle exec srb tc
 bundle exec rake test
