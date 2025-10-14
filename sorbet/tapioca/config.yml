@@ -1,8 +1,21 @@
 gem:
   # Add your `gem` command parameters here:
   #
-  # exclude:
-  # - gem_name
+  exclude:
+  - bigdecimal
+  - amazing_print
+  - rspec
+  - rubocop
+  - yard
+  - yard-sorbet
+  - rdoc
+  - debug
+  - language_server-protocol
+  - rubocop-ast
+  - rubocop-sorbet
+  - parser
+  - regexp_parser
+  - bundler-audit
   # doc: true
   # workers: 5
 dsl:

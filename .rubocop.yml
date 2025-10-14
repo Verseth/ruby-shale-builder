@@ -1,5 +1,5 @@
 inherit_gem:
-  rubocop-espago: rubocop.yml
+  rubocop-espago: sorbet.yml
 
 AllCops:
   TargetRubyVersion: 3.1
@@ -13,4 +13,22 @@ Style/TrailingCommaInArguments:
   Enabled: false
 
 Naming/BlockForwarding:
+  Enabled: false
+
+Sorbet/ForbidTSig:
+  Enabled: false
+
+Sorbet/RedundantExtendTSig:
+  Enabled: false
+
+Sorbet/ForbidMixesInClassMethods:
+  Enabled: false
+
+Sorbet/ForbidTUnsafe:
+  Enabled: false
+
+Sorbet/ForbidTHelpers:
+  Enabled: false
+
+Style/DocumentDynamicEvalDefinition:
   Enabled: false

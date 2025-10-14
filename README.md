@@ -213,6 +213,100 @@ transaction = Transaction.build do |t|
 end
 ```
 
+### Nested Validations
+
+There is an additional module `Shale::Builder::NestedValidations` that provides
+support for seamless nested validations using `ActiveModel`.
+
+In order to load it do:
+
+```rb
+require 'shale/builder/nested_validations'
+```
+
+Then you can use it like so
+
+```rb
+class AmountType < ::Shale::Mapper
+    include ::Shale::Builder
+    include ::ActiveModel::Validations
+    include ::Shale::Builder::NestedValidations
+
+    attribute :value, ::Shale::Type::Float
+    attribute :currency, ::Shale::Type::String
+
+    validates :value, presence: true
+end
+
+class TransactionType < ::Shale::Mapper
+    include ::Shale::Builder
+    include ::ActiveModel::Validations
+    include ::Shale::Builder::NestedValidations
+
+    attribute :cvv_code, ::Shale::Type::String
+    attribute :amount, AmountType
+
+    validates :cvv_code, presence: true
+    validates :amount, presence: true
+end
+
+obj = TransactionType.build do |t|
+    t.amount do |a|
+        a.currency = 'USD'
+    end
+end
+
+obj.valid? #=> false
+obj.errors #=> #<ActiveModel::Errors [#<ActiveModel::Error attribute=cvv_code, type=blank, options={}>, #<ActiveModel::NestedError attribute=amount.value, type=blank, options={}>]>
+obj.errors.messages #=> {cvv_code: ["can't be blank"], "amount.value": ["can't be blank"]}
+```
+
+You MUST include `ActiveModel::Validations` before `Shale::Builder::NestedValidations`.
+
+### Attribute aliases
+
+You can easily create aliases for attributes using `alias_attribute`
+
+Then you can use it like so
+
+```rb
+class AmountType < ::Shale::Mapper
+    include ::Shale::Builder
+    include ::ActiveModel::Validations
+    include ::Shale::Builder::NestedValidations
+
+    attribute :value, ::Shale::Type::Float
+    attribute :currency, ::Shale::Type::String
+
+    validates :value, presence: true
+end
+
+class TransactionType < ::Shale::Mapper
+    include ::Shale::Builder
+    include ::ActiveModel::Validations
+    include ::Shale::Builder::NestedValidations
+
+    attribute :cvv_code, ::Shale::Type::String
+    attribute :amount, AmountType
+
+    validates :cvv_code, presence: true
+    validates :amount, presence: true
+end
+
+obj = TransactionType.build do |t|
+    t.amount do |a|
+        a.currency = 'USD'
+    end
+end
+
+obj.valid? #=> false
+obj.errors #=> #<ActiveModel::Errors [#<ActiveModel::Error attribute=cvv_code, type=blank, options={}>, #<ActiveModel::NestedError attribute=amount.value, type=blank, options={}>]>
+obj.errors.messages #=> {cvv_code: ["can't be blank"], "amount.value": ["can't be blank"]}
+```
+
+You MUST include `ActiveModel::Validations` before `Shale::Builder::NestedValidations`.
+
+
 ### Sorbet support
 
 Shale-builder adds support for sorbet and tapioca.

@@ -1,5 +1,5 @@
-# frozen_string_literal: true
 # typed: true
+# frozen_string_literal: true
 
 require 'shale'
 require 'sorbet-runtime'
@@ -40,6 +40,7 @@ module Shale
   #       end
   #
   module Builder
+    extend T::Sig
     extend T::Helpers
 
     class << self
@@ -66,6 +67,7 @@ module Shale
     module ClassMethods
       extend T::Sig
       extend T::Generic
+
       abstract!
       has_attached_class!
 
@@ -96,18 +98,20 @@ module Shale
 
       sig do
         params(
-          name: T.any(String, Symbol),
-          type: Class,
+          name:       T.any(String, Symbol),
+          type:       Class,
           collection: T::Boolean,
-          default: T.nilable(Proc),
-          doc: T.nilable(String),
-          kwargs: Object,
-          block: T.nilable(T.proc.void),
+          default:    T.nilable(Proc),
+          doc:        T.nilable(String),
+          kwargs:     Object,
+          block:      T.nilable(T.proc.void),
         ).void
       end
       def attribute(name, type, collection: false, default: nil, doc: nil, **kwargs, &block)
         super(name, type, collection:, default:, **kwargs, &block)
-        attributes[name.to_sym]&.doc = doc # add doc to the attribute
+        if (attr_def = attributes[name.to_sym])
+          attr_def.doc = doc
+        end
         return unless type < ::Shale::Mapper
 
         if collection
@@ -137,8 +141,26 @@ module Shale
       end
 
     end
-
     mixes_in_class_methods(ClassMethods)
+
+    # Create an alias for the getter and setter of an attribute.
+    sig { params(new_name: Symbol, old_name: Symbol).void }
+    def alias_attribute(new_name, old_name)
+      klass = T.unsafe(self).class
+
+      attr = klass.attributes[old_name]
+      (attr.aliases ||= []) << new_name
+
+      klass.builder_methods_module.class_eval <<~RUBY, __FILE__, __LINE__ + 1
+        def #{new_name}
+          #{old_name}
+        end
+
+        def #{new_name}=(val)
+          self.#{old_name} = val
+        end
+      RUBY
+    end
 
   end
 end
