@@ -270,42 +270,24 @@ You can easily create aliases for attributes using `alias_attribute`
 Then you can use it like so
 
 ```rb
-class AmountType < ::Shale::Mapper
-    include ::Shale::Builder
-    include ::ActiveModel::Validations
-    include ::Shale::Builder::NestedValidations
+require 'shale/builder'
 
-    attribute :value, ::Shale::Type::Float
-    attribute :currency, ::Shale::Type::String
+class Amount < Shale::Mapper
+    include Shale::Builder
 
-    validates :value, presence: true
+    attribute :value, Shale::Type::Float
+    attribute :currency, Shale::Type::String
+
+    alias_attribute :val, :value
 end
 
-class TransactionType < ::Shale::Mapper
-    include ::Shale::Builder
-    include ::ActiveModel::Validations
-    include ::Shale::Builder::NestedValidations
-
-    attribute :cvv_code, ::Shale::Type::String
-    attribute :amount, AmountType
-
-    validates :cvv_code, presence: true
-    validates :amount, presence: true
+a = Amount.build do |a|
+    a.val = 3.2
 end
 
-obj = TransactionType.build do |t|
-    t.amount do |a|
-        a.currency = 'USD'
-    end
-end
-
-obj.valid? #=> false
-obj.errors #=> #<ActiveModel::Errors [#<ActiveModel::Error attribute=cvv_code, type=blank, options={}>, #<ActiveModel::NestedError attribute=amount.value, type=blank, options={}>]>
-obj.errors.messages #=> {cvv_code: ["can't be blank"], "amount.value": ["can't be blank"]}
+a.val #=> 3.2
+a.value #=> 3.2
 ```
-
-You MUST include `ActiveModel::Validations` before `Shale::Builder::NestedValidations`.
-
 
 ### Sorbet support
 

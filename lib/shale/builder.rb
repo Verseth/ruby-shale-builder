@@ -140,27 +140,25 @@ module Shale
         RUBY
       end
 
+      # Create an alias for the getter and setter of an attribute.
+      sig { params(new_name: Symbol, old_name: Symbol).void }
+      def alias_attribute(new_name, old_name)
+        attr = attributes.fetch(old_name)
+        (attr.aliases ||= []) << new_name
+
+        builder_methods_module.class_eval <<~RUBY, __FILE__, __LINE__ + 1
+          def #{new_name}
+            #{old_name}
+          end
+
+          def #{new_name}=(val)
+            self.#{old_name} = val
+          end
+        RUBY
+      end
+
     end
     mixes_in_class_methods(ClassMethods)
-
-    # Create an alias for the getter and setter of an attribute.
-    sig { params(new_name: Symbol, old_name: Symbol).void }
-    def alias_attribute(new_name, old_name)
-      klass = T.unsafe(self).class
-
-      attr = klass.attributes[old_name]
-      (attr.aliases ||= []) << new_name
-
-      klass.builder_methods_module.class_eval <<~RUBY, __FILE__, __LINE__ + 1
-        def #{new_name}
-          #{old_name}
-        end
-
-        def #{new_name}=(val)
-          self.#{old_name} = val
-        end
-      RUBY
-    end
 
   end
 end
