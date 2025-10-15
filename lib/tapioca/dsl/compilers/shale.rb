@@ -37,9 +37,13 @@ module Tapioca
           # For each attribute defined in the class
           attribute_names = constant.attributes.keys.sort
           attribute_names.each do |attribute_name|
-            attribute = T.let(constant.attributes[attribute_name], ::Shale::Attribute)
-            return_type, nilable = shale_type_to_sorbet_return_type(attribute)
-            comments = T.let([], T::Array[RBI::Comment])
+            attribute = constant.attributes[attribute_name] #: ::Shale::Attribute
+            if (type = attribute.return_type)
+              return_type = type
+            else
+              return_type, nilable = shale_type_to_sorbet_return_type(attribute)
+            end
+            comments = [] #: T::Array[RBI::Comment]
             if shale_builder_defined? && attribute.doc
               comments << RBI::Comment.new(T.must(attribute.doc))
             end
@@ -52,7 +56,11 @@ module Tapioca
               getter_without_block_type = return_type.to_s
             end
 
-            setter_type, nilable = shale_type_to_sorbet_setter_type(attribute)
+            if (type = attribute.return_type || attribute.setter_type)
+              setter_type = type
+            else
+              setter_type, nilable = shale_type_to_sorbet_setter_type(attribute)
+            end
             if attribute.collection?
               setter_type_str = "T.nilable(T::Array[#{setter_type}])"
             elsif nilable

@@ -7,6 +7,12 @@ module Shale
   class Attribute # rubocop:disable Style/Documentation
     extend T::Sig
 
+    #: untyped
+    attr_accessor :setter_type
+
+    #: untyped
+    attr_accessor :return_type
+
     # Contains the documentation comment for the shale attribute
     # in a Ruby String.
     #: String?

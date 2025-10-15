@@ -97,13 +97,34 @@ module Shale
       sig { abstract.returns(T::Hash[Symbol, Shale::Attribute]) }
       def attributes; end
 
-      #: ((String | Symbol) name, Class type, ?collection: bool, ?default: Proc?, ?doc: String?, **Object kwargs) ?{ -> void } -> void
-      def attribute(name, type, collection: false, default: nil, doc: nil, **kwargs, &block)
-        super(name, type, collection:, default:, **kwargs, &block)
+      #: (
+      #|  String | Symbol name,
+      #|  Class shale_mapper,
+      #|  ?collection: bool,
+      #|  ?default: Proc?,
+      #|  ?doc: String?,
+      #|  ?return_type: untyped,
+      #|  ?setter_type: untyped,
+      #|  **Object kwargs
+      #| ) ?{ -> void } -> void
+      def attribute(
+        name,
+        shale_mapper,
+        collection: false,
+        default: nil,
+        doc: nil,
+        return_type: nil,
+        setter_type: nil,
+        **kwargs,
+        &block
+      )
+        super(name, shale_mapper, collection:, default:, **kwargs, &block)
         if (attr_def = attributes[name.to_sym])
           attr_def.doc = doc
+          attr_def.return_type = return_type
+          attr_def.setter_type = setter_type
         end
-        return unless type < ::Shale::Mapper
+        return unless shale_mapper < ::Shale::Mapper
 
         if collection
           @builder_methods_module.class_eval <<~RUBY, __FILE__, __LINE__ + 1
@@ -111,7 +132,7 @@ module Shale
               return super unless block_given?    #   return super unless block_given?
                                                   #
               arr = self.#{name} ||= []           #   arr = self.clients ||= []
-              object = #{type}.new                #   object = Client.new
+              object = #{shale_mapper}.new                #   object = Client.new
               yield(object)                       #   yield(object)
               arr << object                       #   arr << object
               object                              #   object
@@ -124,7 +145,7 @@ module Shale
           def #{name}                                   # def amount
             return super unless block_given?            #   return super unless block_given?
                                                         #
-            object = #{type}.new                        #   object = Amount.new
+            object = #{shale_mapper}.new                        #   object = Amount.new
             yield(object)                               #   yield(object)
             self.#{name} = object                       #   self.amount = object
           end                                           # end
