@@ -26,6 +26,7 @@ class Shale::BuilderTest < ::Minitest::Test
     attribute :cvv_code, ::Shale::Type::String
     attribute :amount, TestAmountType
     attribute :success, ::Shale::Type::Boolean
+    attribute :aux, ::Shale::Type::Value, return_type: Integer
   end
 
   class TestTransactionType < ::Shale::Mapper

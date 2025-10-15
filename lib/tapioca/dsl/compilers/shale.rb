@@ -40,6 +40,7 @@ module Tapioca
             attribute = constant.attributes[attribute_name] #: ::Shale::Attribute
             if (type = attribute.return_type)
               return_type = type
+              nilable = true
             else
               return_type, nilable = shale_type_to_sorbet_return_type(attribute)
             end
@@ -58,6 +59,7 @@ module Tapioca
 
             if (type = attribute.return_type || attribute.setter_type)
               setter_type = type
+              nilable = true
             else
               setter_type, nilable = shale_type_to_sorbet_setter_type(attribute)
             end
