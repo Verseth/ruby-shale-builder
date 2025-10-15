@@ -263,6 +263,41 @@ obj.errors.messages #=> {cvv_code: ["can't be blank"], "amount.value": ["can't b
 
 You MUST include `ActiveModel::Validations` before `Shale::Builder::NestedValidations`.
 
+### Recording Assigned Attributes
+
+There is an additional module `Shale::Builder::AssignedAttributes` that provides
+support for recording which attributes have been assigned in a shale mapper object.
+
+In order to load it do:
+
+```rb
+require 'shale/builder/assigned_attributes'
+```
+
+Then you can use it like so
+
+```rb
+class AmountType < ::Shale::Mapper
+    include ::Shale::Builder
+    include ::Shale::Builder::AssignedAttributes
+
+    attribute :value, ::Shale::Type::Float
+    attribute :currency, ::Shale::Type::String
+end
+
+obj = AmountType.new
+obj.assigned_attribute_names #=> #<Set: {}>
+
+obj.value = 3
+obj.assigned_attribute_names #=> #<Set: {:value}>
+obj.assigned_attributes #=> [#<Shale::Attribute:0x000000011e959b50 @collection=false, @default=nil, @doc=nil, @name=:value, @setter="value=", @type=Shale::Type::Float>]
+obj.assigned_values #=> [#<Shale::Builder::Value:0x000000011d693318 @attribute=#<Shale::Attribute:0x000000011e959b50 @collection=false, @default=nil, @doc=nil, @name=:value, @setter="value=", @type=Shale::Type::Float>, @value=3.0>]
+```
+
+- `assigned_attribute_names` returns a set of attribute names
+- `assigned_attributes` returns an array of attribute definitions
+- `assigned_values` returns an array of `Shale::Builder::Value`, which contains the current value of an attribute and a reference to its definition
+
 ### Attribute aliases
 
 You can easily create aliases for attributes using `alias_attribute`

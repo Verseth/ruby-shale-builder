@@ -6,7 +6,7 @@ require 'booleans'
 
 module Shale
   module Builder
-    # Include in a class tha already includes `Shale::Builder` to add support
+    # Include in a class that already includes `Shale::Builder` to add support
     # for nested ActiveModel validations.
     #
     # @requires_ancestor: Object

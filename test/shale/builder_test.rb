@@ -42,10 +42,13 @@ class Shale::BuilderTest < ::Minitest::Test
 
   class TestClientDataType < ::Shale::Mapper
     include ::Shale::Builder
+    include ::Shale::Builder::AssignedAttributes
 
     attribute :first_name, ::Shale::Type::String
     attribute :last_name, ::Shale::Type::String
     attribute :email, ::Shale::Type::String
+
+    alias_attribute :name, :first_name
   end
 
   class TestEnhancedTransactionType < TestTransactionType
@@ -97,6 +100,31 @@ class Shale::BuilderTest < ::Minitest::Test
     end
   end
 
+
+  should 'correctly handle attribute aliases' do
+    obj = TestClientDataType.new
+    assert_nil obj.first_name
+    assert_nil obj.name
+
+    obj.first_name = 'foo'
+    assert_equal 'foo', obj.first_name
+    assert_equal 'foo', obj.name
+
+    obj.name = 'bar'
+    assert_equal 'bar', obj.first_name
+    assert_equal 'bar', obj.name
+  end
+
+  should 'record assigned attributes' do
+    obj = TestClientDataType.new
+    assert_equal 0, obj.assigned_attribute_names.length
+
+    obj.name = 'foo'
+    assert_equal Set[:first_name], obj.assigned_attribute_names
+
+    obj.email = 'bar'
+    assert_equal Set[:first_name, :email], obj.assigned_attribute_names
+  end
 
   should 'correctly set up a class after including' do
     mod = TestTransactionType.builder_methods_module

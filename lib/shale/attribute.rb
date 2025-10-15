@@ -9,21 +9,28 @@ module Shale
 
     # Contains the documentation comment for the shale attribute
     # in a Ruby String.
-    sig { returns(T.nilable(String)) }
+    #: String?
     attr_accessor :doc
 
     # Contains the documentation comment for the shale attribute
     # in a Ruby String.
-    sig { returns(T.nilable(T::Array[Symbol])) }
+    #: Array[Symbol]?
     attr_accessor :aliases
 
-    sig { returns(T::Array[Symbol]) }
+    #: -> Array[Symbol]
     def all_names
       names = [name]
       aliases = self.aliases
       return names unless aliases
 
       names + aliases
+    end
+
+    # Returns `true` if the attribute is handled by a shale mapper.
+    #
+    #: -> bool
+    def mapper?
+      type.is_a?(Class) && type < Shale::Mapper
     end
   end
 end

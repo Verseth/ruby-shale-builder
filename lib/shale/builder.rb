@@ -39,6 +39,7 @@ module Shale
   #           end
   #       end
   #
+  # @requires_ancestor: Object
   module Builder
     extend T::Sig
     extend T::Helpers
@@ -47,7 +48,7 @@ module Shale
       extend T::Sig
 
       # Gets called after including this module in a module or class.
-      sig { params(mod: Module).void }
+      #: (Module mod) -> void
       def included(mod)
         mod.extend ClassMethods
         Builder.prepare_mod(mod)
@@ -55,7 +56,7 @@ module Shale
 
       # Prepares the received module or class
       # for dynamic method definition.
-      sig { params(mod: Module).void }
+      #: (Module mod) -> void
       def prepare_mod(mod)
         builder_methods_module = ::Module.new
         mod.instance_variable_set :@builder_methods_module, builder_methods_module
@@ -71,7 +72,7 @@ module Shale
       abstract!
       has_attached_class!
 
-      sig { params(subclass: Class).void }
+      #: (Class subclass) -> void
       def inherited(subclass)
         super
         Builder.prepare_mod(subclass)
@@ -79,10 +80,10 @@ module Shale
 
       # Contains overridden getter methods for attributes
       # with complex types (so that they accept a block for building)
-      sig { returns(Module) }
+      #: Module
       attr_reader :builder_methods_module
 
-      sig { params(_block: T.proc.params(arg0: T.attached_class).void).returns(T.attached_class) }
+      #: { (instance arg0) -> void } -> instance
       def build(&_block)
         body = new
         yield(body)
@@ -96,17 +97,7 @@ module Shale
       sig { abstract.returns(T::Hash[Symbol, Shale::Attribute]) }
       def attributes; end
 
-      sig do
-        params(
-          name:       T.any(String, Symbol),
-          type:       Class,
-          collection: T::Boolean,
-          default:    T.nilable(Proc),
-          doc:        T.nilable(String),
-          kwargs:     Object,
-          block:      T.nilable(T.proc.void),
-        ).void
-      end
+      #: ((String | Symbol) name, Class type, ?collection: bool, ?default: Proc?, ?doc: String?, **Object kwargs) ?{ -> void } -> void
       def attribute(name, type, collection: false, default: nil, doc: nil, **kwargs, &block)
         super(name, type, collection:, default:, **kwargs, &block)
         if (attr_def = attributes[name.to_sym])
@@ -141,7 +132,7 @@ module Shale
       end
 
       # Create an alias for the getter and setter of an attribute.
-      sig { params(new_name: Symbol, old_name: Symbol).void }
+      #: (Symbol new_name, Symbol old_name) -> void
       def alias_attribute(new_name, old_name)
         attr = attributes.fetch(old_name)
         (attr.aliases ||= []) << new_name
@@ -160,5 +151,26 @@ module Shale
     end
     mixes_in_class_methods(ClassMethods)
 
+    def initialize(*args, **kwargs, &block)
+      super
+      @__initialized = true
+    end
+
+    #: bool?
+    attr_reader :__initialized
+
+    # Returns an array of shale values
+    # that have been assigned.
+    #
+    #: -> Array[Shale::Builder::Value]
+    def attribute_values
+      klass = self.class #: as untyped
+      klass.attributes.map do |name, attr|
+        Shale::Builder::Value.new(attr, public_send(name))
+      end
+    end
+
   end
 end
+
+require_relative 'builder/value'
