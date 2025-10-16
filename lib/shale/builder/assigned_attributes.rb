@@ -41,7 +41,7 @@ module Shale
         #: (Class subclass) -> void
         def inherited(subclass)
           super
-          Builder.prepare_mod(subclass)
+          AssignedAttributes.prepare_mod(subclass)
         end
 
         # Contains overridden getter methods for attributes
