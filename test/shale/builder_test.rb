@@ -50,6 +50,13 @@ class Shale::BuilderTest < ::Minitest::Test
     attribute :email, ::Shale::Type::String
 
     alias_attribute :name, :first_name
+
+    hsh do
+      map :first_name, to: :first_name
+      map :name, to: :first_name
+      map :last_name, to: :last_name
+      map :email, to: :email
+    end
   end
 
   class TestEnhancedTransactionType < TestTransactionType
@@ -124,6 +131,12 @@ class Shale::BuilderTest < ::Minitest::Test
     assert_equal Set[:first_name], obj.assigned_attribute_names
 
     obj.email = 'bar'
+    assert_equal Set[:first_name, :email], obj.assigned_attribute_names
+
+    obj = TestClientDataType.from_hash({ name: 'foo', email: 'bar' })
+    assert_equal 'foo', obj.first_name
+    assert_equal 'bar', obj.email
+    assert_equal 2, obj.assigned_attribute_names.length
     assert_equal Set[:first_name, :email], obj.assigned_attribute_names
   end
 
