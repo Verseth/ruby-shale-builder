@@ -226,7 +226,8 @@ module Shale
     #: (**untyped) -> void
     def inject_context(**context)
       context.each do |name, val|
-        try(:"#{name}=", val)
+        setter = :"#{name}="
+        public_send(setter, val) if respond_to?(setter)
       end
 
       klass = self.class #: as untyped
