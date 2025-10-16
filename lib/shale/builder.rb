@@ -44,6 +44,8 @@ module Shale
     extend T::Sig
     extend T::Helpers
 
+    S = ::Shale::Type
+
     class << self
       extend T::Sig
 
@@ -235,7 +237,7 @@ module Shale
         val = public_send(name)
         next unless val
 
-        val.inject_context(context)
+        val.inject_context(**context)
       end
     end
 
