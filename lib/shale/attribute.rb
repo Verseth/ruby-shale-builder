@@ -38,5 +38,12 @@ module Shale
     def mapper?
       type.is_a?(Class) && type < Shale::Mapper
     end
+
+    # Returns `true` if the attribute is handled by a shale builder.
+    #
+    #: -> bool
+    def builder?
+      type.is_a?(Class) && type < Shale::Builder
+    end
   end
 end

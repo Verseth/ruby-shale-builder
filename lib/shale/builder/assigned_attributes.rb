@@ -59,6 +59,14 @@ module Shale
       end
       mixes_in_class_methods ClassMethods
 
+      def initialize(*args, **kwargs, &block)
+        super
+        @__initialized = true
+      end
+
+      #: bool?
+      attr_reader :__initialized
+
       # Returns a set of names of assigned shale attributes.
       #
       #: -> Set[Symbol]

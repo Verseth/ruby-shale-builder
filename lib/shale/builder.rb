@@ -169,16 +169,44 @@ module Shale
         RUBY
       end
 
+      # Returns a hash of shale attributes that are handled by a shale mapper.
+      # The result gets memoized.
+      #
+      #: -> Hash[Symbol, Shale::Attribute]
+      def mapper_attributes
+        @mapper_attributes ||= mapper_attributes!
+      end
+
+      # Returns a hash of shale attributes that are handled by a shale mapper.
+      # Always constructs a new hash.
+      #
+      #: -> Hash[Symbol, Shale::Attribute]
+      def mapper_attributes!
+        attributes.select do |_, attr|
+          attr.mapper?
+        end
+      end
+
+      # Returns a hash of shale attributes that are handled by a shale builder.
+      # The result gets memoized.
+      #
+      #: -> Hash[Symbol, Shale::Attribute]
+      def builder_attributes
+        @builder_attributes ||= builder_attributes!
+      end
+
+      # Returns a hash of shale attributes that are handled by a shale builder.
+      # Always constructs a new hash.
+      #
+      #: -> Hash[Symbol, Shale::Attribute]
+      def builder_attributes!
+        attributes.select do |_, attr|
+          attr.builder?
+        end
+      end
+
     end
     mixes_in_class_methods(ClassMethods)
-
-    def initialize(*args, **kwargs, &block)
-      super
-      @__initialized = true
-    end
-
-    #: bool?
-    attr_reader :__initialized
 
     # Returns an array of shale values
     # that have been assigned.
@@ -188,6 +216,25 @@ module Shale
       klass = self.class #: as untyped
       klass.attributes.map do |name, attr|
         Shale::Builder::Value.new(attr, public_send(name))
+      end
+    end
+
+    # Attempts to set the given attributes and values
+    # within this shale builder object and all of its sub-builders.
+    # Attributes that aren't defined are ignored.
+    #
+    #: (**untyped) -> void
+    def inject_context(**context)
+      context.each do |name, val|
+        try(:"#{name}=", val)
+      end
+
+      klass = self.class #: as untyped
+      klass.builder_attributes.each_key do |name|
+        val = public_send(name)
+        next unless val
+
+        val.inject_context(context)
       end
     end
 

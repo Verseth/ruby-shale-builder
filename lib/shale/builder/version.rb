@@ -2,6 +2,6 @@
 
 module Shale
   module Builder
-    VERSION = '0.5.2'
+    VERSION = '0.6.0'
   end
 end
