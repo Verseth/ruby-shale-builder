@@ -38,6 +38,12 @@ module Shale
       module ClassMethods
         extend T::Sig
 
+        #: (Class subclass) -> void
+        def inherited(subclass)
+          super
+          Builder.prepare_mod(subclass)
+        end
+
         # Contains overridden getter methods for attributes
         # with complex types (so that they accept a block for building)
         #: Module
