@@ -14,8 +14,6 @@ module Shale
       extend T::Sig
       extend T::Helpers
 
-      DEFAULT = Object.new
-
       class << self
         extend T::Sig
 
@@ -56,16 +54,16 @@ module Shale
           name,
           shale_mapper,
           collection: false,
-          default: -> { DEFAULT },
+          default: nil,
           **kwargs,
           &block
         )
-          super(name, shale_mapper, collection:, default:, **kwargs, &block) # rubocop:disable Style/SuperArguments
+          super
 
           @assigned_attributes_methods_module.class_eval <<~RUBY, __FILE__, __LINE__ + 1
             def #{name}=(val)
-              return if val.equal?(::Shale::Builder::AssignedAttributes::DEFAULT)
               super
+              return unless @__initialized
 
               self.assigned_attribute_names << #{name.to_sym.inspect}
             end
@@ -73,6 +71,14 @@ module Shale
         end
       end
       mixes_in_class_methods ClassMethods
+
+      def initialize(*args, **kwargs, &block)
+        super
+        @__initialized = true
+      end
+
+      #: bool?
+      attr_reader :__initialized
 
       # Returns a set of names of assigned shale attributes.
       #

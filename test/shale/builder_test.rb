@@ -138,6 +138,11 @@ class Shale::BuilderTest < ::Minitest::Test
     assert_equal 'bar', obj.email
     assert_equal 2, obj.assigned_attribute_names.length
     assert_equal Set[:first_name, :email], obj.assigned_attribute_names
+
+    obj = TestClientDataType.new(first_name: 'foo', email: 'bar')
+    assert_equal 'foo', obj.first_name
+    assert_equal 'bar', obj.email
+    assert_equal 0, obj.assigned_attribute_names.length
   end
 
   should 'correctly set up a class after including' do

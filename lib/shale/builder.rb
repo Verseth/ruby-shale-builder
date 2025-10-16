@@ -237,7 +237,7 @@ module Shale
         val = public_send(name)
         next unless val
 
-        val.inject_context(**context)
+        val.inject_context(**context) if respond_to?(:inject_context)
       end
     end
 
