@@ -263,6 +263,25 @@ obj.errors.messages #=> {cvv_code: ["can't be blank"], "amount.value": ["can't b
 
 You MUST include `ActiveModel::Validations` before `Shale::Builder::NestedValidations`.
 
+The attribute name separator can be changed like so:
+
+```rb
+class TransactionType < ::Shale::Mapper
+    self.nested_attr_name_separator = ':'
+end
+
+
+obj = TransactionType.build do |t|
+    t.amount do |a|
+        a.currency = 'USD'
+    end
+end
+
+obj.valid? #=> false
+obj.errors #=> #<ActiveModel::Errors [#<ActiveModel::Error attribute=cvv_code, type=blank, options={}>, #<ActiveModel::NestedError attribute=amount:value, type=blank, options={}>]>
+obj.errors.messages #=> {cvv_code: ["can't be blank"], "amount:value": ["can't be blank"]}
+```
+
 ### Recording Assigned Attributes
 
 There is an additional module `Shale::Builder::AssignedAttributes` that provides

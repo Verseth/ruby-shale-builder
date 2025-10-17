@@ -23,7 +23,12 @@ module Shale
 
         #: -> String
         def nested_attr_name_separator
-          @nested_attr_name_separator ||= '.'
+          return @nested_attr_name_separator if @nested_attr_name_separator
+
+          s = superclass
+          return @nested_attr_name_separator = s.nested_attr_name_separator if s < NestedValidations
+
+          @nested_attr_name_separator = '.'
         end
 
         sig { returns(T::Hash[Symbol, Shale::Attribute]) }
