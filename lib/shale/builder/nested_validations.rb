@@ -18,6 +18,14 @@ module Shale
       module ClassMethods
         extend T::Sig
 
+        #: String
+        attr_writer :nested_attr_name_separator
+
+        #: -> String
+        def nested_attr_name_separator
+          @nested_attr_name_separator ||= '.'
+        end
+
         sig { returns(T::Hash[Symbol, Shale::Attribute]) }
         def validatable_attributes
           @validatable_attributes ||= attributes.select do |_, val|
@@ -31,6 +39,8 @@ module Shale
       def valid?
         result = super
         errlist = errors
+        klass = self.class #: as untyped
+        separator = klass.nested_attr_name_separator
 
         attrs = T.unsafe(self).class.validatable_attributes
         attrs.each_key do |name|
@@ -40,7 +50,7 @@ module Shale
 
           result = false
           val.errors.each do |err|
-            errlist.import(err, attribute: "#{name}.#{err.attribute}")
+            errlist.import(err, attribute: "#{name}#{separator}#{err.attribute}")
           end
         end
 

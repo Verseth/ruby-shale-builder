@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] - 2025-10-17
+
+[Diff](https://github.com/Verseth/ruby-shale-builder/compare/v0.6.4...v0.7.0)
+
+### Changes
+- Add `Shale::Builder::NestedValidations::nested_attr_name_separator` that lets users customise the nested attribute name separator in validation errors
+
 ## [0.6.4] - 2025-10-16
 
 [Diff](https://github.com/Verseth/ruby-shale-builder/compare/v0.6.3...v0.6.4)
