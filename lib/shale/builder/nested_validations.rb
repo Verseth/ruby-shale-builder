@@ -40,7 +40,7 @@ module Shale
 
         #: -> Array[Symbol]
         def validatable_attribute_names
-          validatable_attribute_names.keys
+          validatable_attributes.keys
         end
       end
       mixes_in_class_methods ClassMethods
