@@ -67,20 +67,23 @@ module Shale
           next if val.valid?
 
           result = false
-          import_errors(name, val)
+          import_errors(val, name: name)
         end
 
         result
       end
 
-      #: (Symbol | String, ActiveModel::Validations?) -> void
-      def import_errors(name, obj)
+      #: (ActiveModel::Validations?, ?name: String | Symbol?) -> void
+      def import_errors(obj, name: nil)
         return unless obj
 
         errlist = errors
-        separator = nested_attr_name_separator
+        if name
+          separator = nested_attr_name_separator
+          prefix = "#{name}#{separator}"
+        end
         obj.errors.each do |err|
-          errlist.import(err, attribute: "#{name}#{separator}#{err.attribute}")
+          errlist.import(err, attribute: "#{prefix}#{err.attribute}")
         end
       end
 
