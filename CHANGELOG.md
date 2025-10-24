@@ -10,6 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [Diff](https://github.com/Verseth/ruby-shale-builder/compare/v0.8.2...v0.8.3)
 
 ### Changes
+- Make `name` in `Shale::Builder::NestedValidations#import_errors` an optional kwarg
+
+## [0.8.3] - 2025-10-24
+
+[Diff](https://github.com/Verseth/ruby-shale-builder/compare/v0.8.2...v0.8.3)
+
+### Changes
 - Fix `valid?`
 
 ## [0.8.2] - 2025-10-24
