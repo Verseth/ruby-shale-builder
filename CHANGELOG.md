@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.8.0] - 2025-10-24
 
+[Diff](https://github.com/Verseth/ruby-shale-builder/compare/v0.8.0...v0.8.1)
+
+### Changes
+- Change `Shale::Type::Value` generated type from `Object` to `T.untyped`
+
+## [0.8.0] - 2025-10-24
+
 [Diff](https://github.com/Verseth/ruby-shale-builder/compare/v0.7.1...v0.8.0)
 
 ### Changes

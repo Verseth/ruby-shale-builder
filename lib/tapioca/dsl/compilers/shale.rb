@@ -156,7 +156,7 @@ module Tapioca
       # Maps Shale return types to Sorbet types
       SHALE_RETURN_TYPES_MAP = T.let(
         {
-          ::Shale::Type::Value    => Object,
+          ::Shale::Type::Value    => T.untyped,
           ::Shale::Type::String   => String,
           ::Shale::Type::Float    => Float,
           ::Shale::Type::Integer  => Integer,
@@ -172,7 +172,7 @@ module Tapioca
       # Maps Shale setter types to Sorbet types
       SHALE_SETTER_TYPES_MAP = T.let(
         {
-          ::Shale::Type::Value    => Object,
+          ::Shale::Type::Value    => T.untyped,
           ::Shale::Type::String   => String,
           ::Shale::Type::Float    => Float,
           ::Shale::Type::Integer  => Integer,
