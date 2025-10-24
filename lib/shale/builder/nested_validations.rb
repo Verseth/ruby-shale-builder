@@ -31,35 +31,57 @@ module Shale
           @nested_attr_name_separator = '.'
         end
 
-        sig { returns(T::Hash[Symbol, Shale::Attribute]) }
+        #: -> Hash[Symbol, Shale::Attribute]
         def validatable_attributes
           @validatable_attributes ||= attributes.select do |_, val|
             val.validatable?
           end
         end
+
+        #: -> Array[Symbol]
+        def validatable_attribute_names
+          validatable_attribute_names.keys
+        end
       end
       mixes_in_class_methods ClassMethods
 
-      sig { returns(T::Boolean) }
+      #: -> Array[Symbol]
+      def validatable_attribute_names
+        self.class.validatable_attribute_names
+      end
+
+      #: -> String
+      def nested_attr_name_separator
+        self.class.nested_attr_name_separator
+      end
+
+      #: -> bool
       def valid?
         result = super
-        errlist = errors
-        klass = self.class #: as untyped
-        separator = klass.nested_attr_name_separator
 
-        attrs = T.unsafe(self).class.validatable_attributes
-        attrs.each_key do |name|
+        validatable_attribute_names.each_key do |name|
+          next unless name
+
           val = public_send(name)
           next unless val
           next if val.valid?
 
           result = false
-          val.errors.each do |err|
-            errlist.import(err, attribute: "#{name}#{separator}#{err.attribute}")
-          end
+          import_errors(val)
         end
 
         result
+      end
+
+      #: (ActiveModel::Validations?) -> void
+      def import_errors(obj)
+        return unless obj
+
+        errlist = errors
+        separator = nested_attr_name_separator
+        obj.errors.each do |err|
+          errlist.import(err, attribute: "#{name}#{separator}#{err.attribute}")
+        end
       end
 
     end
@@ -68,7 +90,7 @@ end
 
 module Shale
   class Attribute # rubocop:disable Style/Documentation
-    sig { returns(T::Boolean) }
+    #: -> bool
     def validatable?
       Boolean(type.is_a?(Class) && type < ::ActiveModel::Validations)
     end
