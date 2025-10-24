@@ -59,7 +59,7 @@ module Shale
       def valid?
         result = super
 
-        validatable_attribute_names.each_key do |name|
+        validatable_attribute_names.each do |name|
           next unless name
 
           val = public_send(name)
@@ -67,14 +67,14 @@ module Shale
           next if val.valid?
 
           result = false
-          import_errors(val)
+          import_errors(name, val)
         end
 
         result
       end
 
-      #: (ActiveModel::Validations?) -> void
-      def import_errors(obj)
+      #: (Symbol | String, ActiveModel::Validations?) -> void
+      def import_errors(name, obj)
         return unless obj
 
         errlist = errors
