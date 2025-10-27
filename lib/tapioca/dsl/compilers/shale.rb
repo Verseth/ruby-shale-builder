@@ -50,9 +50,9 @@ module Tapioca
             end
 
             if attribute.collection?
-              getter_without_block_type = "T.nilable(T::Array[#{return_type}])"
+              getter_without_block_type = wrap_nilable_type(wrap_array_type(return_type))
             elsif nilable
-              getter_without_block_type = "T.nilable(#{return_type})"
+              getter_without_block_type = wrap_nilable_type(return_type)
             else
               getter_without_block_type = return_type.to_s
             end
@@ -64,9 +64,9 @@ module Tapioca
               setter_type, nilable = shale_type_to_sorbet_setter_type(attribute)
             end
             if attribute.collection?
-              setter_type_str = "T.nilable(T::Array[#{setter_type}])"
+              setter_type_str = wrap_nilable_type(wrap_array_type(setter_type))
             elsif nilable
-              setter_type_str = "T.nilable(#{setter_type})"
+              setter_type_str = wrap_nilable_type(setter_type)
             else
               setter_type_str = setter_type.to_s
             end
@@ -90,6 +90,18 @@ module Tapioca
           end
         end
 
+      end
+
+      sig { params(type: T.untyped).returns(String) }
+      def wrap_nilable_type(type)
+        return "T.nilable(#{type})" if type != T.untyped
+
+        T.unsafe(type).to_s
+      end
+
+      sig { params(type: T.untyped).returns(String) }
+      def wrap_array_type(type)
+        "T::Array[#{type}]"
       end
 
       sig do
