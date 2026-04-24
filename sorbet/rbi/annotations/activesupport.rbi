@@ -21,7 +21,7 @@ class ActiveSupport::EnvironmentInquirer
 
   # @method_missing: delegated to String through ActiveSupport::StringInquirer
   sig { returns(T::Boolean) }
-  def staging?; end
+  def local?; end
 end
 
 module ActiveSupport::Testing::SetupAndTeardown::ClassMethods
@@ -90,7 +90,7 @@ class Hash
   def extractable_options?; end
 
   # @version >= 6.1.0
-  sig { returns(T::Hash[K, V]) }
+  sig { returns(T.self_type) }
   def compact_blank; end
 end
 

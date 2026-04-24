@@ -145,6 +145,47 @@ non-primitive types have been overridden to accept blocks.
 When a block is given to such a getter, it instantiates an empty object
 of its type and yields it to the block.
 
+#### Overriding
+
+By default if you call the builder method with a block a second time
+it will override the previous object with a new one
+
+```rb
+transaction = Transaction.build do |t|
+    t.amount do |a|
+        a.value = 2.3
+        a.currency = 'PLN'
+    end
+    t.amount do |a|
+        a.value = 10
+    end
+end
+
+transaction.amount.value #=> 10
+transaction.amount.currency #=> nil
+```
+
+#### Memoization
+
+You can change the behaviour of builder methods
+so that they preserve existing objects when called a second time.
+You do that by using the `memoize: true` keyword argument.
+
+```rb
+transaction = Transaction.build do |t|
+    t.amount do |a|
+        a.value = 2.3
+        a.currency = 'PLN'
+    end
+    t.amount(memoize: true) do |a|
+        a.value = 10
+    end
+end
+
+transaction.amount.value #=> 10
+transaction.amount.currency #=> 'PLN'
+```
+
 ### Collections
 
 Whenever you call a getter with a block for a collection attribute, the built object will be appended to the array.

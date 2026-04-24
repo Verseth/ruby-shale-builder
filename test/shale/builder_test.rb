@@ -235,6 +235,44 @@ class Shale::BuilderTest < ::Minitest::Test
     assert_equal 'USD', obj.amount.currency
   end
 
+  should 'build an object through the DSL with overriding' do
+    obj = TestTransactionType.build do |t|
+      t.cvv_code = '321'
+      t.amount do |a|
+        a.value = 45.0
+        a.currency = 'USD'
+      end
+      t.amount do |a|
+        a.value = 15
+      end
+    end
+
+    assert obj.is_a?(TestTransactionType)
+    assert_equal '321', obj.cvv_code
+    assert obj.amount.is_a?(TestAmountType)
+    assert_equal 15, obj.amount.value
+    assert_nil obj.amount.currency
+  end
+
+  should 'build an object through the DSL with memoization' do
+    obj = TestTransactionType.build do |t|
+      t.cvv_code = '321'
+      t.amount do |a|
+        a.value = 45.0
+        a.currency = 'USD'
+      end
+      t.amount(memoize: true) do |a|
+        a.value = 15
+      end
+    end
+
+    assert obj.is_a?(TestTransactionType)
+    assert_equal '321', obj.cvv_code
+    assert obj.amount.is_a?(TestAmountType)
+    assert_equal 15, obj.amount.value
+    assert_equal 'USD', obj.amount.currency
+  end
+
   should 'build an object with a collection attribute' do
     obj = TestMultipleClientTransactionType.build do |t|
       t.cvv_code = '321'

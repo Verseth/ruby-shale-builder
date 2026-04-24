@@ -18,7 +18,8 @@ module Tapioca
       class << self
         extend T::Sig
 
-        sig { override.returns(T::Enumerable[Module]) }
+        # @override
+        #: -> T::Enumerable[Module]
         def gather_constants
           # Collect all the classes that inherit from Shale::Mapper
           all_classes.select { |c| c < ::Shale::Mapper }
@@ -27,7 +28,8 @@ module Tapioca
 
       SHALE_ATTRIBUTE_MODULE = 'ShaleAttributeMethods'
 
-      sig { override.void }
+      # @override
+      #: -> void
       def decorate
         # Create a RBI definition for each class that inherits from Shale::Mapper
         root.create_path(constant) do |klass|
@@ -92,60 +94,64 @@ module Tapioca
 
       end
 
-      sig { params(type: T.untyped).returns(String) }
+      #: (untyped type) -> String
       def wrap_nilable_type(type)
         return "T.nilable(#{type})" if type != T.untyped
 
         T.unsafe(type).to_s
       end
 
-      sig { params(type: T.untyped).returns(String) }
+      #: (untyped type) -> String
       def wrap_array_type(type)
         "T::Array[#{type}]"
       end
 
-      sig do
-        params(
-          mod: RBI::Scope,
-          method_name: String,
-          type: Object,
-          getter_without_block_type: String,
-          comments: T::Array[RBI::Comment],
-        ).void
-      end
+      #: (RBI::Scope mod, String method_name, Object type, String getter_without_block_type, Array[RBI::Comment] comments) -> void
       def generate_mapper_getter(mod, method_name, type, getter_without_block_type, comments)
         if mod.respond_to?(:create_sig)
           mod = T.unsafe(mod)
           # for tapioca < 0.16.0
-          sigs = T.let([], T::Array[RBI::Sig])
+          sigs = [] #: Array[RBI::Sig]
 
           # simple getter
           sigs << mod.create_sig(
-            parameters: { block: 'NilClass' },
+            parameters: {
+              memoize: 'FalseClass',
+              block: 'NilClass',
+            },
             return_type: getter_without_block_type,
           )
           # getter with block
           sigs << mod.create_sig(
-            parameters: { block: "T.proc.params(arg0: #{type}).void" },
+            parameters: {
+              memoize: 'T::Boolean',
+              block: "T.proc.params(arg0: #{type}).void"
+            },
             return_type: type.to_s
           )
           mod.create_method_with_sigs(
             method_name,
             sigs: sigs,
             comments: comments,
-            parameters: [RBI::BlockParam.new('block')],
+            parameters: [
+              RBI::KwOptParam.new('memoize', 'false'),
+              RBI::BlockParam.new('block'),
+            ],
           )
         else
           # for tapioca >= 0.16.0
           mod.create_method(method_name, comments: comments) do |method|
             method.add_block_param('block')
+            method.add_kw_opt_param('memoize', 'false')
 
             method.add_sig do |sig|
+              sig.add_param('memoize', 'FalseClass')
               sig.add_param('block', 'NilClass')
               sig.return_type = getter_without_block_type
             end
 
             method.add_sig do |sig|
+              sig.add_param('memoize', 'T::Boolean')
               sig.add_param('block', "T.proc.params(arg0: #{type}).void")
               sig.return_type = type.to_s
             end
@@ -155,51 +161,45 @@ module Tapioca
 
       private
 
-      sig { params(klass: Class).returns(T.nilable(T::Boolean)) }
+      #: (Class klass) -> bool?
       def includes_shale_builder(klass)
         return false unless defined?(::Shale::Builder)
 
         klass < ::Shale::Builder
       end
 
-      sig { returns(T::Boolean) }
+      #: -> bool
       def shale_builder_defined? = Boolean(defined?(::Shale::Builder))
 
       # Maps Shale return types to Sorbet types
-      SHALE_RETURN_TYPES_MAP = T.let(
-        {
-          ::Shale::Type::Value    => T.untyped,
-          ::Shale::Type::String   => String,
-          ::Shale::Type::Float    => Float,
-          ::Shale::Type::Integer  => Integer,
-          ::Shale::Type::Time     => Time,
-          ::Shale::Type::Date     => Date,
-          ::Shale::Type::Boolean  => T::Boolean,
-        }.tap do |h|
-          h[::Shale::Type::Decimal] = BigDecimal if defined?(::Shale::Type::Decimal)
-        end.freeze,
-        T::Hash[Class, Object],
-      )
+      SHALE_RETURN_TYPES_MAP = {
+        ::Shale::Type::Value    => T.untyped,
+        ::Shale::Type::String   => String,
+        ::Shale::Type::Float    => Float,
+        ::Shale::Type::Integer  => Integer,
+        ::Shale::Type::Time     => Time,
+        ::Shale::Type::Date     => Date,
+        ::Shale::Type::Boolean  => T::Boolean,
+      }.tap do |h|
+        h[::Shale::Type::Decimal] = BigDecimal if defined?(::Shale::Type::Decimal)
+      end.freeze #: Hash[Class, Object]
 
       # Maps Shale setter types to Sorbet types
-      SHALE_SETTER_TYPES_MAP = T.let(
-        {
-          ::Shale::Type::Value    => T.untyped,
-          ::Shale::Type::String   => String,
-          ::Shale::Type::Float    => Float,
-          ::Shale::Type::Integer  => Integer,
-          ::Shale::Type::Time     => Time,
-          ::Shale::Type::Date     => Date,
-          ::Shale::Type::Boolean  => Object,
-        }.tap do |h|
-          if defined?(::Shale::Type::Decimal)
-            h[::Shale::Type::Decimal] = T.any(BigDecimal, String, Float, Integer, NilClass)
-          end
-        end.freeze,
-        T::Hash[Class, Object],
-      )
+      SHALE_SETTER_TYPES_MAP = {
+        ::Shale::Type::Value    => T.untyped,
+        ::Shale::Type::String   => String,
+        ::Shale::Type::Float    => Float,
+        ::Shale::Type::Integer  => Integer,
+        ::Shale::Type::Time     => Time,
+        ::Shale::Type::Date     => Date,
+        ::Shale::Type::Boolean  => Object,
+      }.tap do |h|
+        if defined?(::Shale::Type::Decimal)
+          h[::Shale::Type::Decimal] = T.any(BigDecimal, String, Float, Integer, NilClass)
+        end
+      end.freeze #: Hash[Class, Object]
 
-      sig { params(attribute: ::Shale::Attribute).returns([Object, T::Boolean]) }
+      #: (::Shale::Attribute attribute) -> [Object, bool]
       def shale_type_to_sorbet_return_type(attribute)
         return_type = SHALE_RETURN_TYPES_MAP[attribute.type]
         return complex_shale_type_to_sorbet_return_type(attribute) unless return_type
@@ -208,7 +208,7 @@ module Tapioca
         [return_type, true]
       end
 
-      sig { params(attribute: ::Shale::Attribute).returns([Object, T::Boolean]) }
+      #: (::Shale::Attribute attribute) -> [Object, bool]
       def complex_shale_type_to_sorbet_return_type(attribute)
         return attribute.type, true unless attribute.type.respond_to?(:return_type)
 
@@ -216,7 +216,7 @@ module Tapioca
         [return_type_string, false]
       end
 
-      sig { params(attribute: ::Shale::Attribute).returns([Object, T::Boolean]) }
+      #: (::Shale::Attribute attribute) -> [Object, bool]
       def shale_type_to_sorbet_setter_type(attribute)
         setter_type = SHALE_SETTER_TYPES_MAP[attribute.type]
         return complex_shale_type_to_sorbet_setter_type(attribute) unless setter_type
@@ -225,7 +225,7 @@ module Tapioca
         [setter_type, true]
       end
 
-      sig { params(attribute: ::Shale::Attribute).returns([Object, T::Boolean]) }
+      #: (::Shale::Attribute attribute) -> [Object, bool]
       def complex_shale_type_to_sorbet_setter_type(attribute)
         if attribute.type.respond_to?(:setter_type)
           setter_type_string = attribute.type.setter_type

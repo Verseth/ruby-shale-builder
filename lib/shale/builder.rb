@@ -130,27 +130,27 @@ module Shale
 
         if collection
           @builder_methods_module.class_eval <<~RUBY, __FILE__, __LINE__ + 1
-            def #{name}                           # def clients
-              return super unless block_given?    #   return super unless block_given?
-                                                  #
-              arr = self.#{name} ||= []           #   arr = self.clients ||= []
-              object = #{shale_mapper}.new                #   object = Client.new
-              yield(object)                       #   yield(object)
-              arr << object                       #   arr << object
-              object                              #   object
-            end                                   # end
+            def #{name}
+              return super unless block_given?
+
+              arr = self.#{name} ||= []
+              object = #{shale_mapper}.new
+              yield(object)
+              arr << object
+              object
+            end
           RUBY
           return
         end
 
         @builder_methods_module.class_eval <<~RUBY, __FILE__, __LINE__ + 1
-          def #{name}                                   # def amount
-            return super unless block_given?            #   return super unless block_given?
-                                                        #
-            object = #{shale_mapper}.new                        #   object = Amount.new
-            yield(object)                               #   yield(object)
-            self.#{name} = object                       #   self.amount = object
-          end                                           # end
+          def #{name}(memoize: false)
+            return super() unless block_given?
+
+            object = (memoize && self.#{name}) || #{shale_mapper}.new
+            yield(object)
+            self.#{name} = object
+          end
         RUBY
       end
 
