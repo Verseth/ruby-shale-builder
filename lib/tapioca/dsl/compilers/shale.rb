@@ -141,8 +141,8 @@ module Tapioca
         else
           # for tapioca >= 0.16.0
           mod.create_method(method_name, comments: comments) do |method|
-            method.add_block_param('block')
             method.add_kw_opt_param('memoize', 'false')
+            method.add_block_param('block')
 
             method.add_sig do |sig|
               sig.add_param('memoize', 'FalseClass')
