@@ -169,7 +169,7 @@ transaction.amount.currency #=> nil
 
 You can change the behaviour of builder methods
 so that they preserve existing objects when called a second time.
-You do that by using the `memoize: true` keyword argument.
+You do that by prepending the method name with `memo_`.
 
 ```rb
 transaction = Transaction.build do |t|
@@ -177,7 +177,7 @@ transaction = Transaction.build do |t|
         a.value = 2.3
         a.currency = 'PLN'
     end
-    t.amount(memoize: true) do |a|
+    t.memo_amount do |a|
         a.value = 10
     end
 end

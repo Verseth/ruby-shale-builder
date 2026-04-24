@@ -116,7 +116,6 @@ module Tapioca
           # simple getter
           sigs << mod.create_sig(
             parameters: {
-              memoize: 'FalseClass',
               block: 'NilClass',
             },
             return_type: getter_without_block_type,
@@ -124,7 +123,6 @@ module Tapioca
           # getter with block
           sigs << mod.create_sig(
             parameters: {
-              memoize: 'T::Boolean',
               block: "T.proc.params(arg0: #{type}).void"
             },
             return_type: type.to_s
@@ -134,24 +132,54 @@ module Tapioca
             sigs: sigs,
             comments: comments,
             parameters: [
-              RBI::KwOptParam.new('memoize', 'false'),
+              RBI::BlockParam.new('block'),
+            ],
+          )
+
+          mod.create_method_with_sigs(
+            "memo_#{method_name}",
+            sigs: [
+              mod.create_sig(
+                parameters: {
+                  block: "T.proc.params(arg0: #{type}).void"
+                },
+                return_type: type.to_s
+              )
+            ],
+            comments: [
+              RBI::Comment.new("Version of `#{method_name}` that memoizes the previous object if it was already present.\n"),
+              *comments,
+            ],
+            parameters: [
               RBI::BlockParam.new('block'),
             ],
           )
         else
           # for tapioca >= 0.16.0
           mod.create_method(method_name, comments: comments) do |method|
-            method.add_kw_opt_param('memoize', 'false')
             method.add_block_param('block')
 
             method.add_sig do |sig|
-              sig.add_param('memoize', 'FalseClass')
               sig.add_param('block', 'NilClass')
               sig.return_type = getter_without_block_type
             end
 
             method.add_sig do |sig|
-              sig.add_param('memoize', 'T::Boolean')
+              sig.add_param('block', "T.proc.params(arg0: #{type}).void")
+              sig.return_type = type.to_s
+            end
+          end
+
+          mod.create_method(
+            "memo_#{method_name}",
+            comments: [
+              RBI::Comment.new("Version of `#{method_name}` that memoizes the previous object if it was already present.\n"),
+              *comments,
+            ],
+          ) do |method|
+            method.add_block_param('block')
+
+            method.add_sig do |sig|
               sig.add_param('block', "T.proc.params(arg0: #{type}).void")
               sig.return_type = type.to_s
             end
