@@ -144,10 +144,16 @@ module Shale
         end
 
         @builder_methods_module.class_eval <<~RUBY, __FILE__, __LINE__ + 1
-          def #{name}(memoize: false)
-            return super() unless block_given?
+          def #{name}
+            return super unless block_given?
 
-            object = (memoize && self.#{name}) || #{shale_mapper}.new
+            object = #{shale_mapper}.new
+            yield(object)
+            self.#{name} = object
+          end
+
+          def memo_#{name}
+            object = self.#{name} || #{shale_mapper}.new
             yield(object)
             self.#{name} = object
           end
