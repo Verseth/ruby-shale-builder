@@ -78,8 +78,8 @@ class Shale::BuilderTest < ::Minitest::Test
       assert !TestTransactionType.include?(mod_child)
       assert TestEnhancedTransactionType.include?(mod_child)
       assert TestEnhancedTransactionType.include?(mod_parent)
-      assert_equal %i[memo_amount amount], mod_parent.instance_methods
-      assert_equal %i[client_data memo_client_data], mod_child.instance_methods
+      assert_equal %i[amount memo_amount], mod_parent.instance_methods.sort
+      assert_equal %i[client_data memo_client_data], mod_child.instance_methods.sort
     end
 
     should 'correctly build an instance of a subclass' do
@@ -149,7 +149,7 @@ class Shale::BuilderTest < ::Minitest::Test
     mod = TestTransactionType.builder_methods_module
     assert mod.is_a?(::Module)
     assert TestTransactionType.include?(mod)
-    assert_equal %i[memo_amount amount], mod.instance_methods
+    assert_equal %i[amount memo_amount], mod.instance_methods.sort
   end
 
   should 'not define a new method for an attribute when it is a primitive' do
@@ -157,10 +157,10 @@ class Shale::BuilderTest < ::Minitest::Test
     test_subclass.include ::Shale::Builder
 
     mod = test_subclass.builder_methods_module
-    assert !mod.instance_methods.include?(:type)
+    assert !mod.method_defined?(:type)
 
     test_subclass.attribute :type, ::Shale::Type::String
-    assert !mod.instance_methods.include?(:type)
+    assert !mod.method_defined?(:type)
     test_subclass.new.type do |_|
       assert false
     end
@@ -171,10 +171,10 @@ class Shale::BuilderTest < ::Minitest::Test
     test_subclass.include ::Shale::Builder
 
     mod = test_subclass.builder_methods_module
-    assert !mod.instance_methods.include?(:transaction)
+    assert !mod.method_defined?(:transaction)
 
     test_subclass.attribute :transaction, TestTransactionType
-    assert mod.instance_methods.include?(:transaction)
+    assert mod.method_defined?(:transaction)
 
     test_object = test_subclass.new
     assert_nil test_object.transaction

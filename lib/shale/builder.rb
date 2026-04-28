@@ -72,7 +72,7 @@ module Shale
       extend T::Generic
 
       abstract!
-      has_attached_class!
+      has_attached_class!(:out)
 
       #: (Class subclass) -> void
       def inherited(subclass)

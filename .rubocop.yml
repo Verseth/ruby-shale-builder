@@ -2,7 +2,7 @@ inherit_gem:
   rubocop-espago: sorbet.yml
 
 AllCops:
-  TargetRubyVersion: 3.1
+  TargetRubyVersion: 3.2
   Exclude:
     - lib/tapioca/**/*.rb
 
@@ -31,4 +31,10 @@ Sorbet/ForbidTHelpers:
   Enabled: false
 
 Style/DocumentDynamicEvalDefinition:
+  Enabled: false
+
+Style/HashLookupMethod:
+  Enabled: false
+
+Style/OneClassPerFile:
   Enabled: false
