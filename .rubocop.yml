@@ -32,3 +32,9 @@ Sorbet/ForbidTHelpers:
 
 Style/DocumentDynamicEvalDefinition:
   Enabled: false
+
+Style/HashLookupMethod:
+  Enabled: false
+
+Style/OneClassPerFile:
+  Enabled: false

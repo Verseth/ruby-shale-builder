@@ -33,6 +33,6 @@ Gem::Specification.new do |spec|
   # Uncomment to register a new dependency of your gem
   spec.add_dependency 'booleans', '>= 0.1'
   spec.add_dependency 'shale', '< 2.0'
-  spec.add_dependency 'sorbet-runtime', '> 0.5'
+  spec.add_dependency 'sorbet-runtime', '> 0.6'
   spec.metadata['rubygems_mfa_required'] = 'true'
 end
