@@ -78,8 +78,8 @@ class Shale::BuilderTest < ::Minitest::Test
       assert !TestTransactionType.include?(mod_child)
       assert TestEnhancedTransactionType.include?(mod_child)
       assert TestEnhancedTransactionType.include?(mod_parent)
-      assert_equal %i[amount memo_amount], mod_parent.instance_methods
-      assert_equal %i[memo_client_data client_data], mod_child.instance_methods
+      assert_equal %i[amount memo_amount], mod_parent.instance_methods.sort
+      assert_equal %i[client_data memo_client_data], mod_child.instance_methods.sort
     end
 
     should 'correctly build an instance of a subclass' do
@@ -149,7 +149,7 @@ class Shale::BuilderTest < ::Minitest::Test
     mod = TestTransactionType.builder_methods_module
     assert mod.is_a?(::Module)
     assert TestTransactionType.include?(mod)
-    assert_equal %i[amount memo_amount], mod.instance_methods
+    assert_equal %i[amount memo_amount], mod.instance_methods.sort
   end
 
   should 'not define a new method for an attribute when it is a primitive' do

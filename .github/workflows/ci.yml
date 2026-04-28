@@ -2,9 +2,9 @@ name: CI Ruby
 
 on:
   push:
-    branches: [ 'main', 'develop' ]
+    branches: [ "main", "develop" ]
   pull_request:
-    branches: [ 'main', 'develop' ]
+    branches: [ "main", "develop" ]
 
 jobs:
   test:
@@ -13,7 +13,7 @@ jobs:
       CI: true
     strategy:
       matrix:
-        ruby-version: ['3.2', '3.3', '3.4']
+        ruby-version: [ "3.3", "3.4", "4.0" ]
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -35,7 +35,7 @@ jobs:
       - name: Install Ruby and gems
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.2'
+          ruby-version: "4.0"
           bundler-cache: true
       - name: Lint Ruby files
         run: bundle exec rubocop --parallel
@@ -50,7 +50,7 @@ jobs:
       - name: Install Ruby and gems
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.2'
+          ruby-version: "4.0"
           bundler-cache: true
       - name: Typecheck Ruby files
         run: bundle exec srb tc

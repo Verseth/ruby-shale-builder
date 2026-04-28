@@ -135,6 +135,7 @@ PLATFORMS
   arm64-darwin-20
   arm64-darwin-22
   arm64-darwin-24
+  arm64-darwin-25
   x86_64-linux
 
 DEPENDENCIES
@@ -154,4 +155,4 @@ DEPENDENCIES
   tapioca (> 0.19)
 
 BUNDLED WITH
-   2.7.2
+  4.0.10
