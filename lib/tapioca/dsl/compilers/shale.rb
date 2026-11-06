@@ -76,7 +76,7 @@ module Tapioca
             attribute.all_names.each do |name|
               name_str = name.to_s
               if has_shale_builder && attribute.builder
-                generate_mapper_getter(mod, name_str, return_type, getter_without_block_type, comments)
+                generate_mapper_getter(mod, name_str, attribute.builder, getter_without_block_type, comments)
               else
                 mod.create_method(name_str, return_type: getter_without_block_type, comments: comments)
               end
