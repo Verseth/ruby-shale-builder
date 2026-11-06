@@ -126,9 +126,9 @@ module Shale
 
         if shale_mapper < ::Shale::Mapper
           builder ||= shale_mapper
-          if shale_mapper.respond_to?(:builder)
-            builder ||= shale_mapper.public_send(:builder)
-          end
+        end
+        if shale_mapper.respond_to?(:builder)
+          builder ||= shale_mapper.public_send(:builder)
         end
 
         if (attr_def = attributes[name.to_sym])
