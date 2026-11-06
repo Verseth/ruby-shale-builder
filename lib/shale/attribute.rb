@@ -13,6 +13,9 @@ module Shale
     #: untyped
     attr_accessor :return_type
 
+    #: untyped
+    attr_accessor :builder
+
     # Contains the documentation comment for the shale attribute
     # in a Ruby String.
     #: String?

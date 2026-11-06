@@ -107,6 +107,7 @@ module Shale
       #|  ?doc: String?,
       #|  ?return_type: untyped,
       #|  ?setter_type: untyped,
+      #|  ?builder: untyped,
       #|  **Object kwargs
       #| ) ?{ -> void } -> void
       def attribute(
@@ -117,43 +118,66 @@ module Shale
         doc: nil,
         return_type: nil,
         setter_type: nil,
+        builder: nil,
         **kwargs,
         &block
       )
         super(name, shale_mapper, collection:, default:, **kwargs, &block)
+
+        if shale_mapper < ::Shale::Mapper
+          builder ||= shale_mapper
+          if shale_mapper.respond_to?(:builder)
+            builder ||= shale_mapper.public_send(:builder)
+          end
+        end
+
         if (attr_def = attributes[name.to_sym])
           attr_def.doc = doc
           attr_def.return_type = return_type
           attr_def.setter_type = setter_type
+          attr_def.builder = builder
         end
-        return unless shale_mapper < ::Shale::Mapper
 
+        def_getter(name, builder, collection) if builder
+      end
+
+      #: (String | Symbol, untyped, bool) -> void
+      def def_getter(name, builder, collection)
         if collection
-          @builder_methods_module.class_eval <<~RUBY, __FILE__, __LINE__ + 1
-            def #{name}
-              return super unless block_given?
-
-              arr = self.#{name} ||= []
-              object = #{shale_mapper}.new
-              yield(object)
-              arr << object
-              object
-            end
-          RUBY
-          return
+          return def_collection_getter(name, builder)
         end
 
+        def_regular_getter(name, builder)
+      end
+
+      #: (String | Symbol, untyped) -> void
+      def def_collection_getter(name, builder)
         @builder_methods_module.class_eval <<~RUBY, __FILE__, __LINE__ + 1
           def #{name}
             return super unless block_given?
 
-            object = #{shale_mapper}.new
+            arr = self.#{name} ||= []
+            object = #{builder}.new
+            yield(object)
+            arr << object
+            object
+          end
+        RUBY
+      end
+
+      #: (String | Symbol, untyped) -> void
+      def def_regular_getter(name, builder)
+        @builder_methods_module.class_eval <<~RUBY, __FILE__, __LINE__ + 1
+          def #{name}
+            return super unless block_given?
+
+            object = #{builder}.new
             yield(object)
             self.#{name} = object
           end
 
           def memo_#{name}
-            object = self.#{name} || #{shale_mapper}.new
+            object = self.#{name} || #{builder}.new
             yield(object)
             self.#{name} = object
           end
