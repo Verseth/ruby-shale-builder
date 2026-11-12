@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.11.0] - 2026-11-12
+
+[Diff](https://github.com/Verseth/ruby-shale-builder/compare/v0.10.0...v0.11.0)
+
+### Changes
+- Add support the `def self.builder` method to specify custom builder objects
+
 ## [0.10.0] - 2026-04-28
 
 [Diff](https://github.com/Verseth/ruby-shale-builder/compare/v0.9.3...v0.10.0)
