@@ -128,7 +128,7 @@ module Shale
           builder ||= shale_mapper
         end
         if shale_mapper.respond_to?(:builder)
-          builder ||= shale_mapper.public_send(:builder)
+          builder ||= T.unsafe(shale_mapper).builder
         end
 
         if (attr_def = attributes[name.to_sym])
