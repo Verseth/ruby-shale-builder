@@ -549,29 +549,29 @@ require 'shale/builder'
 #   - `expiry` is `"2027-04"`
 #   - `cvc` is `"123"`
 module ResourceURI
-	class Properties < Shale::Type::Value
-		class << self
-			def return_type = T.nilable(T::Hash[String, String])
-			def setter_type = T.any(T::Hash[String, String], NilClass)
-			def builder = Hash
+  class Properties < Shale::Type::Value
+    class << self
+      def return_type = T.nilable(T::Hash[String, String])
+      def setter_type = T.any(T::Hash[String, String], NilClass)
+      def builder = Hash
 
-			# Decode from JSON.
-			#
-			#: (Hash[String, String]?) -> (Hash[String, String]?)
-			def cast(value)
-				value
-			end
+      # Decode from JSON.
+      #
+      #: (Hash[String, String]?) -> (Hash[String, String]?)
+      def cast(value)
+        value
+      end
 
-			# Encode to JSON.
-			#
-			#: (Hash[String, String]?, **untyped) -> (Hash[String, String]?)
-			def as_json(value, **_)
-				return if value.nil?
+      # Encode to JSON.
+      #
+      #: (Hash[String, String]?, **untyped) -> (Hash[String, String]?)
+      def as_json(value, **_)
+        return if value.nil?
 
-				value.as_json
-			end
-		end
-	end
+        value.as_json
+      end
+    end
+  end
 
   class Body < Shale::Mapper
     include Shale::Builder
@@ -594,22 +594,22 @@ module ResourceURI
       Additional properties of the resource
     DOC
 
-		#: -> String
-		def to_resource_uri
-			buf = String.new
-			buf << schema
-			buf << ':'
-			buf << id if id
+    #: -> String
+    def to_resource_uri
+      buf = String.new
+      buf << schema
+      buf << ':'
+      buf << id if id
 
-			properties.each do |hkey, hval|
-				buf << ';'
-				buf << hkey
-				buf << '='
-				buf << hval
-			end
+      properties.each do |hkey, hval|
+        buf << ';'
+        buf << hkey
+        buf << '='
+        buf << hval
+      end
 
-			buf
-		end
+      buf
+    end
   end
 
   class Type < Shale::Type::Value
@@ -651,7 +651,7 @@ module ResourceURI
 
         value.to_resource_uri
       end
-			alias as_hash as_json
+      alias as_hash as_json
     end
   end
 end
@@ -663,14 +663,14 @@ class Payment < Shale::Mapper
 end
 
 payment = Payment.build do |p|
-	p.account_uri do |a|
-		a.schema = 'pan'
-		a.id = "4242424242424242"
-		a.properties do |p|
-			p['expiry'] = '2027-04'
-			p['cvc'] = '123'
-		end
-	end
+  p.account_uri do |a|
+    a.schema = 'pan'
+    a.id = "4242424242424242"
+    a.properties do |p|
+      p['expiry'] = '2027-04'
+      p['cvc'] = '123'
+    end
+  end
 end
 
 payment.to_json
