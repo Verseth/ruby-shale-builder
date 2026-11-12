@@ -8,6 +8,7 @@ gemspec
 gem 'activemodel', '~> 8.1' # validations
 gem 'base64', '~> 0.3' # Base64
 gem 'byebug', '~> 13.0' # debugger
+gem 'irb', '~> 1.19.0' # REPL
 gem 'minitest', '~> 6.0' # test framework
 gem 'mutex_m', '~> 0.3' # Mutexes
 gem 'racc', '~> 1.8' # parser

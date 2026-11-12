@@ -23,16 +23,16 @@ Build your [shale](https://github.com/kgiszczak/shale) classes like a boss.
 
 ```rb
 transaction = Transaction.build do |t|
-    t.cvv_code = '123'
-    t.amount do |a|
-        a.value = 2.3
-        a.currency = 'PLN'
-    end
-    t.payment_instrument do |p|
-        p.number = '4242424242424242'
-        p.expiration_year = 2045
-        p.expiration_month = 12
-    end
+  t.cvv_code = '123'
+  t.amount do |a|
+    a.value = 2.3
+    a.currency = 'PLN'
+  end
+  t.payment_instrument do |p|
+    p.number = '4242424242424242'
+    p.expiration_year = 2045
+    p.expiration_month = 12
+  end
 end
 ```
 
@@ -48,10 +48,10 @@ You can use it like that:
 require 'shale/builder'
 
 class Amount < Shale::Mapper
-    include Shale::Builder
+  include Shale::Builder
 
-    attribute :value, Shale::Type::Float
-    attribute :currency, Shale::Type::String
+  attribute :value, Shale::Type::Float
+  attribute :currency, Shale::Type::String
 end
 ```
 
@@ -65,8 +65,8 @@ You can do it like that:
 
 ```rb
 amount = Amount.build do |a|
-    a.value = 2.3
-    a.currency = 'PLN'
+  a.value = 2.3
+  a.currency = 'PLN'
 end
 ```
 
@@ -79,26 +79,26 @@ Let's say that you've got a structure like this:
 
 ```rb
 class Amount < Shale::Mapper
-    include Shale::Builder
+  include Shale::Builder
 
-    attribute :value, Shale::Type::Float
-    attribute :currency, Shale::Type::String
+  attribute :value, Shale::Type::Float
+  attribute :currency, Shale::Type::String
 end
 
 class PaymentInstrument < Shale::Mapper
-    include Shale::Builder
+  include Shale::Builder
 
-    attribute :number, Shale::Type::String
-    attribute :expiration_year, ::Shale::Type::Integer
-    attribute :expiration_month, ::Shale::Type::Integer
+  attribute :number, Shale::Type::String
+  attribute :expiration_year, ::Shale::Type::Integer
+  attribute :expiration_month, ::Shale::Type::Integer
 end
 
 class Transaction < Shale::Mapper
-    include Shale::Builder
+  include Shale::Builder
 
-    attribute :cvv_code, Shale::Type::String
-    attribute :amount, Amount
-    attribute :payment_instrument, PaymentInstrument
+  attribute :cvv_code, Shale::Type::String
+  attribute :amount, Amount
+  attribute :payment_instrument, PaymentInstrument
 end
 ```
 
@@ -106,16 +106,16 @@ Normally you would instantiate it like that:
 
 ```rb
 transaction = Transaction.new(
-    cvv_code: '123',
-    amount: Amount.new(
-        value: 2.3,
-        currency: 'PLN'
-    ),
-    payment_instrument: PaymentInstrument.new(
-        number: '4242424242424242',
-        expiration_year: 2045,
-        expiration_month: 12
-    )
+  cvv_code: '123',
+  amount: Amount.new(
+    value: 2.3,
+    currency: 'PLN'
+  ),
+  payment_instrument: PaymentInstrument.new(
+    number: '4242424242424242',
+    expiration_year: 2045,
+    expiration_month: 12
+  )
 )
 ```
 
@@ -127,16 +127,16 @@ This gem provides a better way:
 
 ```rb
 transaction = Transaction.build do |t|
-    t.cvv_code = '123'
-    t.amount do |a|
-        a.value = 2.3
-        a.currency = 'PLN'
-    end
-    t.payment_instrument do |p|
-        p.number = '4242424242424242'
-        p.expiration_year = 2045
-        p.expiration_month = 12
-    end
+  t.cvv_code = '123'
+  t.amount do |a|
+    a.value = 2.3
+    a.currency = 'PLN'
+  end
+  t.payment_instrument do |p|
+    p.number = '4242424242424242'
+    p.expiration_year = 2045
+    p.expiration_month = 12
+  end
 end
 ```
 
@@ -152,13 +152,13 @@ it will override the previous object with a new one
 
 ```rb
 transaction = Transaction.build do |t|
-    t.amount do |a|
-        a.value = 2.3
-        a.currency = 'PLN'
-    end
-    t.amount do |a|
-        a.value = 10
-    end
+  t.amount do |a|
+    a.value = 2.3
+    a.currency = 'PLN'
+  end
+  t.amount do |a|
+    a.value = 10
+  end
 end
 
 transaction.amount.value #=> 10
@@ -173,13 +173,13 @@ You do that by prepending the method name with `memo_`.
 
 ```rb
 transaction = Transaction.build do |t|
-    t.amount do |a|
-        a.value = 2.3
-        a.currency = 'PLN'
-    end
-    t.memo_amount do |a|
-        a.value = 10
-    end
+  t.amount do |a|
+    a.value = 2.3
+    a.currency = 'PLN'
+  end
+  t.memo_amount do |a|
+    a.value = 10
+  end
 end
 
 transaction.amount.value #=> 10
@@ -194,17 +194,17 @@ Let's define a schema like this.
 
 ```rb
 class Client < Shale::Mapper
-    include Shale::Builder
+  include Shale::Builder
 
-    attribute :first_name, Shale::Type::String
-    attribute :last_name, Shale::Type::String
-    attribute :email, Shale::Type::String
+  attribute :first_name, Shale::Type::String
+  attribute :last_name, Shale::Type::String
+  attribute :email, Shale::Type::String
 end
 
 class Transaction < Shale::Mapper
-    include Shale::Builder
+  include Shale::Builder
 
-    attribute :clients, Client, collection: true
+  attribute :clients, Client, collection: true
 end
 ```
 
@@ -239,18 +239,18 @@ objects conditionally.
 
 ```rb
 transaction = Transaction.build do |t|
-    t.cvv_code = '123'
-    t.amount do |a|
-        a.value = 2.3 if some_flag?
-        a.currency = 'PLN'
+  t.cvv_code = '123'
+  t.amount do |a|
+    a.value = 2.3 if some_flag?
+    a.currency = 'PLN'
+  end
+  t.payment_instrument do |p|
+    p.number = '4242424242424242'
+    if some_condition?
+      p.expiration_year = 2045
+      p.expiration_month = 12
     end
-    t.payment_instrument do |p|
-        p.number = '4242424242424242'
-        if some_condition?
-            p.expiration_year = 2045
-            p.expiration_month = 12
-        end
-    end
+  end
 end
 ```
 
@@ -269,32 +269,32 @@ Then you can use it like so
 
 ```rb
 class AmountType < ::Shale::Mapper
-    include ::Shale::Builder
-    include ::ActiveModel::Validations
-    include ::Shale::Builder::NestedValidations
+  include ::Shale::Builder
+  include ::ActiveModel::Validations
+  include ::Shale::Builder::NestedValidations
 
-    attribute :value, ::Shale::Type::Float
-    attribute :currency, ::Shale::Type::String
+  attribute :value, ::Shale::Type::Float
+  attribute :currency, ::Shale::Type::String
 
-    validates :value, presence: true
+  validates :value, presence: true
 end
 
 class TransactionType < ::Shale::Mapper
-    include ::Shale::Builder
-    include ::ActiveModel::Validations
-    include ::Shale::Builder::NestedValidations
+  include ::Shale::Builder
+  include ::ActiveModel::Validations
+  include ::Shale::Builder::NestedValidations
 
-    attribute :cvv_code, ::Shale::Type::String
-    attribute :amount, AmountType
+  attribute :cvv_code, ::Shale::Type::String
+  attribute :amount, AmountType
 
-    validates :cvv_code, presence: true
-    validates :amount, presence: true
+  validates :cvv_code, presence: true
+  validates :amount, presence: true
 end
 
 obj = TransactionType.build do |t|
-    t.amount do |a|
-        a.currency = 'USD'
-    end
+  t.amount do |a|
+    a.currency = 'USD'
+  end
 end
 
 obj.valid? #=> false
@@ -308,14 +308,14 @@ The attribute name separator can be changed like so:
 
 ```rb
 class TransactionType < ::Shale::Mapper
-    self.nested_attr_name_separator = ':'
+  self.nested_attr_name_separator = ':'
 end
 
 
 obj = TransactionType.build do |t|
-    t.amount do |a|
-        a.currency = 'USD'
-    end
+  t.amount do |a|
+    a.currency = 'USD'
+  end
 end
 
 obj.valid? #=> false
@@ -338,11 +338,11 @@ Then you can use it like so
 
 ```rb
 class AmountType < ::Shale::Mapper
-    include ::Shale::Builder
-    include ::Shale::Builder::AssignedAttributes
+  include ::Shale::Builder
+  include ::Shale::Builder::AssignedAttributes
 
-    attribute :value, ::Shale::Type::Float
-    attribute :currency, ::Shale::Type::String
+  attribute :value, ::Shale::Type::Float
+  attribute :currency, ::Shale::Type::String
 end
 
 obj = AmountType.new
@@ -368,16 +368,16 @@ Then you can use it like so
 require 'shale/builder'
 
 class Amount < Shale::Mapper
-    include Shale::Builder
+  include Shale::Builder
 
-    attribute :value, Shale::Type::Float
-    attribute :currency, Shale::Type::String
+  attribute :value, Shale::Type::Float
+  attribute :currency, Shale::Type::String
 
-    alias_attribute :val, :value
+  alias_attribute :val, :value
 end
 
 a = Amount.build do |a|
-    a.val = 3.2
+  a.val = 3.2
 end
 
 a.val #=> 3.2
@@ -395,14 +395,14 @@ It will be used to generate a comment in the RBI file.
 require 'shale/builder'
 
 class Amount < Shale::Mapper
-    include Shale::Builder
+  include Shale::Builder
 
-    attribute :value, Shale::Type::Float
-    attribute :currency, Shale::Type::String, doc: <<~DOC
-        This is some custom documentation that can be used by sorbet.
-        It will be used by the tapioca DSL compiler
-        to generate the RBI documentation for this attribute.
-    DOC
+  attribute :value, Shale::Type::Float
+  attribute :currency, Shale::Type::String, doc: <<~DOC
+    This is some custom documentation that can be used by sorbet.
+    It will be used by the tapioca DSL compiler
+    to generate the RBI documentation for this attribute.
+  DOC
 end
 ```
 
@@ -464,40 +464,40 @@ require 'shale/builder'
 # Cast from XML string to BigDecimal.
 # And from BigDecimal to XML string.
 class BigDecimalShaleType < Shale::Type::Value
-    class << self
-        extend T::Sig
+  class << self
+    extend T::Sig
 
-        # the return type of the field that uses this class as its type
-        def return_type = T.nilable(BigDecimal)
-        # the type of the argument given to a setter of the field
-        # that uses this class as its type
-        def setter_type = T.any(BigDecimal, String, NilClass)
+    # the return type of the field that uses this class as its type
+    def return_type = T.nilable(BigDecimal)
+    # the type of the argument given to a setter of the field
+    # that uses this class as its type
+    def setter_type = T.any(BigDecimal, String, NilClass)
 
-        # Decode from XML.
-        sig { params(value: T.any(BigDecimal, String, NilClass)).returns(T.nilable(BigDecimal)) }
-        def cast(value)
-            return if value.nil?
+    # Decode from XML.
+    sig { params(value: T.any(BigDecimal, String, NilClass)).returns(T.nilable(BigDecimal)) }
+    def cast(value)
+      return if value.nil?
 
-            BigDecimal(value)
-        end
-
-        # Encode to XML.
-        #
-        # @param value: Value to convert to XML
-        sig { params(value: T.nilable(BigDecimal)).returns(T.nilable(String)) }
-        def as_xml_value(value)
-            return if value.nil?
-
-            value.to_s('F')
-        end
+      BigDecimal(value)
     end
+
+    # Encode to XML.
+    #
+    # @param value: Value to convert to XML
+    sig { params(value: T.nilable(BigDecimal)).returns(T.nilable(String)) }
+    def as_xml_value(value)
+      return if value.nil?
+
+      value.to_s('F')
+    end
+  end
 end
 
 class Amount < Shale::Mapper
-    include Shale::Builder
+  include Shale::Builder
 
-    # `value` uses BigDecimalShaleType as its type
-    attribute :value, BigDecimalShaleType
+  # `value` uses BigDecimalShaleType as its type
+  attribute :value, BigDecimalShaleType
 end
 ```
 
@@ -519,6 +519,244 @@ class Amount
 
     sig { params(value: T.nilable(T.any(::BigDecimal, ::String))).returns(T.nilable(T.any(::BigDecimal, ::String))) }
     def value=(value); end
+  end
+end
+```
+
+#### Parsing strings or other primitive values to shale objects
+
+If you want to parse a primitive value like a string, integer, float etc
+to a shale mapper object you can use a primitive shale type as a bridge.
+
+
+By defining the `builder` method that returns a shale mapper class
+of the parsed value, you can make this composite type usable with the builder DSL.
+
+```rb
+def self.builder = ResourceURI::Body
+```
+
+Here is a full example.
+
+```rb
+# typed: true
+require 'shale/builder'
+
+# Resource URI is a string serialization format eg. `"pan:4242424242424242;expiry=2027-04;cvc=123"`
+# - schema is `"pan"`
+# - id is `"4242424242424242"`
+# - properties are:
+#   - `expiry` is `"2027-04"`
+#   - `cvc` is `"123"`
+module ResourceURI
+	class Properties < Shale::Type::Value
+		class << self
+			def return_type = T.nilable(T::Hash[String, String])
+			def setter_type = T.any(T::Hash[String, String], NilClass)
+			def builder = Hash
+
+			# Decode from JSON.
+			#
+			#: (Hash[String, String]?) -> (Hash[String, String]?)
+			def cast(value)
+				value
+			end
+
+			# Encode to JSON.
+			#
+			#: (Hash[String, String]?, **untyped) -> (Hash[String, String]?)
+			def as_json(value, **_)
+				return if value.nil?
+
+				value.as_json
+			end
+		end
+	end
+
+  class Body < Shale::Mapper
+    include Shale::Builder
+
+    attribute :schema, S::String, doc: <<~DOC
+      required
+
+      String identifying the resource.
+    DOC
+
+    attribute :id, S::String, doc: <<~DOC
+      optional
+
+      Main identifier of the resource.
+    DOC
+
+    attribute :properties, Properties, doc: <<~DOC
+      optional
+
+      Additional properties of the resource
+    DOC
+
+		#: -> String
+		def to_resource_uri
+			buf = String.new
+			buf << schema
+			buf << ':'
+			buf << id if id
+
+			properties.each do |hkey, hval|
+				buf << ';'
+				buf << hkey
+				buf << '='
+				buf << hval
+			end
+
+			buf
+		end
+  end
+
+  class Type < Shale::Type::Value
+    class << self
+      def return_type = T.nilable(Body)
+      def setter_type = T.any(Body, String, NilClass)
+      def builder = Body
+
+      # Decode from JSON.
+      #
+      #: (Body | String?) -> (Body?)
+      def cast(value)
+        return if value.nil?
+        return value unless value.is_a?(String)
+
+        hash = {}
+        schema, rest = value.split(':', 2)
+        if rest
+          pairs = rest.split(';')
+          id = pairs.shift
+        end
+
+        properties = T.unsafe(pairs).to_h { |str| str.split('=', 2) }
+        hash = {
+          'schema'     => schema,
+          'id'         => id,
+          'properties' => properties,
+        }
+
+        Body.from_hash(hash)
+      end
+
+      # Encode to JSON.
+      #
+      #: (Body | String?, **untyped) -> String?
+      def as_json(value, **_)
+        return value if value.nil?
+        return value if value.is_a?(String)
+
+        value.to_resource_uri
+      end
+			alias as_hash as_json
+    end
+  end
+end
+
+class Payment < Shale::Mapper
+  include Shale::Builder
+
+  attribute :account_uri, ResourceURI::Type
+end
+
+payment = Payment.build do |p|
+	p.account_uri do |a|
+		a.schema = 'pan'
+		a.id = "4242424242424242"
+		a.properties do |p|
+			p['expiry'] = '2027-04'
+			p['cvc'] = '123'
+		end
+	end
+end
+
+payment.to_json
+#=> {"account_uri":"pan:4242424242424242;expiry=2027-04;cvc=123"}
+
+payment = Payment.from_json('{"account_uri":"pan:4242424242424242;expiry=2027-04;cvc=123"}')
+#=> #<Payment:0x00000001215413f8 @account_uri=#<ResourceURI::Body:0x00000001216aff28 @id="4242424242424242", @schema="pan", @properties={"expiry" => "2027-04", "cvc" => "123"}>>
+```
+
+After running `bundle exec tapioca dsl` you'll get the following RBI.
+
+```rb
+# typed: true
+
+# DO NOT EDIT MANUALLY
+# This is an autogenerated file for dynamic methods in `Amount`.
+# Please instead update this file by running `bin/tapioca dsl Amount`.
+
+class ResourceURI::Body
+  include ShaleAttributeMethods
+
+  module ShaleAttributeMethods
+    # optional
+    #
+    # Main identifier of the resource.
+    sig { returns(T.nilable(String)) }
+    def id; end
+
+    # optional
+    #
+    # Main identifier of the resource.
+    sig { params(value: T.nilable(String)).returns(T.nilable(String)) }
+    def id=(value); end
+
+    # Version of `properties` that memoizes the previous object if it was already present.
+    # optional
+    #
+    # Additional properties of the resource
+    sig { params(block: T.proc.params(arg0: Hash).void).returns(Hash) }
+    def memo_properties(&block); end
+
+    # optional
+    #
+    # Additional properties of the resource
+    sig { params(block: NilClass).returns(T.nilable(T::Hash[::String, ::String])) }
+    sig { params(block: T.proc.params(arg0: Hash).void).returns(Hash) }
+    def properties(&block); end
+
+    # optional
+    #
+    # Additional properties of the resource
+    sig { params(value: T.nilable(T::Hash[::String, ::String])).returns(T.nilable(T::Hash[::String, ::String])) }
+    def properties=(value); end
+
+    # required
+    #
+    # String identifying the resource.
+    sig { returns(T.nilable(String)) }
+    def schema; end
+
+    # required
+    #
+    # String identifying the resource.
+    sig { params(value: T.nilable(String)).returns(T.nilable(String)) }
+    def schema=(value); end
+  end
+end
+
+class Payment
+  include ShaleAttributeMethods
+
+  module ShaleAttributeMethods
+    sig { params(block: NilClass).returns(T.nilable(::ResourceURI::Body)) }
+    sig { params(block: T.proc.params(arg0: ResourceURI::Body).void).returns(ResourceURI::Body) }
+    def account_uri(&block); end
+
+    sig do
+      params(
+        value: T.nilable(T.any(::ResourceURI::Body, ::String))
+      ).returns(T.nilable(T.any(::ResourceURI::Body, ::String)))
+    end
+    def account_uri=(value); end
+
+    # Version of `account_uri` that memoizes the previous object if it was already present.
+    sig { params(block: T.proc.params(arg0: ResourceURI::Body).void).returns(ResourceURI::Body) }
+    def memo_account_uri(&block); end
   end
 end
 ```
